@@ -1,10 +1,25 @@
 #!/bin/bash
-HOOKS_DIR=".git/hooks"
+# Installer for the pre-commit hook
+
+# Resolve project root
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+HOOKS_DIR="$PROJECT_ROOT/.git/hooks"
 HOOK_FILE="$HOOKS_DIR/pre-commit"
+SOURCE_HOOK="$PROJECT_ROOT/Scripts/pre-commit.sh"
 
-echo "Installing pre-commit hook..."
+# Check source hook exists
+if [ ! -f "$SOURCE_HOOK" ]; then
+    echo "Error: $SOURCE_HOOK not found."
+    exit 1
+fi
+
+# Create hooks directory if it doesn't exist
 mkdir -p "$HOOKS_DIR"
-cp Scripts/pre-commit.sh "$HOOK_FILE"
-chmod +x "$HOOK_FILE"
-echo "Pre-commit hook installed!"
 
+# Copy pre-commit hook into .git/hooks
+cp "$SOURCE_HOOK" "$HOOK_FILE"
+
+# Make it executable
+chmod +x "$HOOK_FILE"
+
+echo "Pre-commit hook installed successfully at $HOOK_FILE"
