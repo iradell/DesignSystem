@@ -6,8 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6382CCB62EA059A7009089FE /* pre-commit.sh in Resources */ = {isa = PBXBuildFile; fileRef = 6382CCB42EA059A7009089FE /* pre-commit.sh */; };
+		6382CCB72EA059A7009089FE /* install-hooks.sh in Resources */ = {isa = PBXBuildFile; fileRef = 6382CCB32EA059A7009089FE /* install-hooks.sh */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		634020A32E9FC90D008B59D3 /* DesignSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DesignSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6382CCB32EA059A7009089FE /* install-hooks.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-hooks.sh"; sourceTree = "<group>"; };
+		6382CCB42EA059A7009089FE /* pre-commit.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "pre-commit.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +39,7 @@
 		634020992E9FC90D008B59D3 = {
 			isa = PBXGroup;
 			children = (
+				6382CCB52EA059A7009089FE /* Scripts */,
 				634020A52E9FC90D008B59D3 /* DesignSystem */,
 				634020A42E9FC90D008B59D3 /* Products */,
 			);
@@ -43,6 +51,15 @@
 				634020A32E9FC90D008B59D3 /* DesignSystem.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6382CCB52EA059A7009089FE /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				6382CCB32EA059A7009089FE /* install-hooks.sh */,
+				6382CCB42EA059A7009089FE /* pre-commit.sh */,
+			);
+			path = Scripts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -121,6 +138,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6382CCB62EA059A7009089FE /* pre-commit.sh in Resources */,
+				6382CCB72EA059A7009089FE /* install-hooks.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
