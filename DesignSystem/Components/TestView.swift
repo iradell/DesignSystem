@@ -9,6 +9,6 @@ import SwiftUI
 
 struct TestView: View {
     var body: some View {
-        Text("HelHello Wsdfdskfhasljhdjsalkdjaslkdjwkljdekwljfewklfewgfjewl'fgewjiofejwio jiwoedjwioe jiwoe jweiojd oiwej wegit=dsfasdsafdslnfjkdskforldHello World")
+        Text("HelHello Wsdfdskfhasljhdjsalkdjaslkdjwkljdekwljfewklfewgfjewl'fgewjiofejwio jiwoedjwioe jiwoe jweiojd oiwej wegit=dsfasdsafdslnfjkdskfsorldHello World")
     }
 }
