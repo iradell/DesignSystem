@@ -1,0 +1,94 @@
+# SwiftLint Configuration for Design System
+
+# ----------------------------
+# Disabled Rules
+# ----------------------------
+disabled_rules:
+  - trailing_whitespace       # Allow some flexibility for alignment
+  - todo                      # Allow TODOs during design system iteration
+  - file_length                # UI components often get long (but we monitor them manually)
+  - type_body_length           # Some view structs may be long
+  - function_body_length       # Allow long build() or body implementations
+  - large_tuple                # Sometimes used for layout tuples
+
+# ----------------------------
+# Opt-in Rules (Encourage Clarity)
+# ----------------------------
+opt_in_rules:
+  - empty_count
+  - explicit_init
+  - operator_usage_whitespace
+  - closure_end_indentation
+  - vertical_whitespace_between_cases
+  - switch_case_alignment
+  - indentation_width
+  - attributes
+  - redundant_nil_coalescing
+  - unneeded_parentheses_in_closure_argument
+  - yoda_condition
+
+analyzer_rules:
+  - explicit_self
+  - unused_import
+
+# ----------------------------
+# Included / Excluded Paths
+# ----------------------------
+included:
+  - Sources
+  - DesignSystem
+  - Modules
+
+excluded:
+  - Pods
+  - Carthage
+  - DerivedData
+  - fastlane
+  - Scripts
+
+# ----------------------------
+# Rule Configurations
+# ----------------------------
+line_length:
+  warning: 120
+  error: 150
+
+identifier_name:
+  min_length: 2
+  excluded:
+    - id
+    - x
+    - y
+    - UI
+    - ds   # for design system short tags
+
+type_name:
+  max_length: 50
+
+function_parameter_count:
+  warning: 5
+  error: 8
+
+cyclomatic_complexity:
+  warning: 12
+  error: 20
+
+nesting:
+  type_level:
+    warning: 3
+    error: 5
+
+vertical_whitespace:
+  max_empty_lines: 2
+
+# ----------------------------
+# Custom Rules (Optional)
+# ----------------------------
+custom_rules:
+  avoid_force_unwrap:
+    included: ".*\\.swift"
+    name: "Avoid Force Unwrap"
+    regex: "!"
+    message: "Avoid using force unwraps (!) in design system code."
+    severity: warning
+
