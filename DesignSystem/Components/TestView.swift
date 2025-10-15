@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TestView: View {
     // Force unwrap test
-    let optionalString: String? = nil
+    let optionalString: String?
     var forced: String { optionalString! }
 
     var body: some View {
