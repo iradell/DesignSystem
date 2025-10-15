@@ -54,13 +54,15 @@ done
 # ----------------------------
 # Run SwiftLint on staged files
 # ----------------------------
-cd "$TMP_DIR" || exit 1
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 echo -e "${BLUE}🔍 Running SwiftLint...${NC}"
-"$SWIFTLINT_BIN" lint --strict
-if [ $? -ne 0 ]; then
-    PASS=false
-fi
-cd - >/dev/null || exit 1
+
+for FILE in $STAGED_FILES; do
+    "$SWIFTLINT_BIN" lint "$FILE" --strict --config "$PROJECT_ROOT/.swiftlint.yml"
+    if [ $? -ne 0 ]; then
+        PASS=false
+    fi
+done
 
 # ----------------------------
 # Run SwiftFormat on staged files (sort imports + format)
