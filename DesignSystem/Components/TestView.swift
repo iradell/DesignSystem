@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct TestView: View {
+    // Force unwrap test
+    let optionalString: String? = nil
+    var forced: String { optionalString! }
+
     var body: some View {
-        Text("HelHello asjkdjklsadjas ajsad World")
+        Text("Forced value length")
     }
 }
