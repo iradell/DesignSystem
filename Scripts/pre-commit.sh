@@ -12,6 +12,7 @@ echo -e "${BLUE}🔧 Pre-commit hook triggered!${NC}"
 
 SWIFTLINT_BIN="/opt/homebrew/bin/swiftlint"
 SWIFTFORMAT_BIN="/opt/homebrew/bin/swiftformat"
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 
 # ----------------------------
 # Check if SwiftLint exists
@@ -29,54 +30,25 @@ if [ ! -f "$SWIFTFORMAT_BIN" ]; then
     exit 1
 fi
 
-# ----------------------------
-# Get staged Swift files
-# ----------------------------
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.swift$')
-
-if [ -z "$STAGED_FILES" ]; then
-    echo -e "${YELLOW}⚠️  No Swift files staged. Skipping SwiftLint & SwiftFormat.${NC}"
-    exit 0
-fi
-
 PASS=true
-PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 
 # ----------------------------
-# Create temp dir for staged files
+# Run SwiftLint on entire project
 # ----------------------------
-TMP_DIR=$(mktemp -d)
-
-for FILE in $STAGED_FILES; do
-    mkdir -p "$TMP_DIR/$(dirname "$FILE")"
-    git show ":$FILE" > "$TMP_DIR/$FILE"
-done
-
-# ----------------------------
-# Run SwiftLint on staged snapshot
-# ----------------------------
-echo -e "${BLUE}🔍 Running SwiftLint on staged files...${NC}"
-cd "$TMP_DIR" || exit 1
-
-"$SWIFTLINT_BIN" lint --strict --config "$PROJECT_ROOT/.swiftlint.yml"
+echo -e "${BLUE}🔍 Running SwiftLint on the whole project...${NC}"
+"$SWIFTLINT_BIN" lint --strict --config "$PROJECT_ROOT/.swiftlint.yml" "$PROJECT_ROOT"
 if [ $? -ne 0 ]; then
     PASS=false
 fi
-cd - >/dev/null || exit 1
 
 # ----------------------------
-# Run SwiftFormat on staged files (sort imports + format)
+# Run SwiftFormat on entire project (sort imports + format)
 # ----------------------------
-echo -e "${BLUE}🧹 Running SwiftFormat on staged files...${NC}"
-for FILE in $STAGED_FILES; do
-    "$SWIFTFORMAT_BIN" "$PROJECT_ROOT/$FILE" --enable sortImports --swiftversion 5
-    git add "$FILE"
-done
+echo -e "${BLUE}🧹 Running SwiftFormat on the whole project...${NC}"
+"$SWIFTFORMAT_BIN" "$PROJECT_ROOT" --enable sortImports --swiftversion 5
 
-# ----------------------------
-# Clean up
-# ----------------------------
-rm -rf "$TMP_DIR"
+# Stage all files after formatting
+git add .
 
 # ----------------------------
 # Show result
@@ -85,7 +57,7 @@ if ! $PASS; then
     echo -e "${RED}❌ SwiftLint violations detected. Commit aborted.${NC}"
     exit 1
 else
-    echo -e "${GREEN}🎉 SwiftLint passed & imports sorted! Commit ready.${NC}"
+    echo -e "${GREEN}🎉 SwiftLint passed & imports sorted for the whole project! Commit ready.${NC}"
 fi
 
 exit 0
