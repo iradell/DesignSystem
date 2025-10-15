@@ -1,7 +1,6 @@
 #!/bin/bash
-# Pre-commit hook: Run SwiftLint on staged Swift files
+echo "Pre-commit hook triggered!"
 
-# Path to SwiftLint
 SWIFTLINT_BIN="/opt/homebrew/bin/swiftlint"
 
 # Check SwiftLint exists
@@ -11,21 +10,33 @@ if [ ! -f "$SWIFTLINT_BIN" ]; then
 fi
 
 # Get all staged Swift files
-STAGED_SWIFT_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.swift$')
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.swift$')
 
-# Exit if no Swift files staged
-if [ -z "$STAGED_SWIFT_FILES" ]; then
+if [ -z "$STAGED_FILES" ]; then
+    echo "No Swift files staged. Skipping SwiftLint."
     exit 0
 fi
 
 PASS=true
-for file in $STAGED_SWIFT_FILES; do
-    # Run SwiftLint on each file
-    "$SWIFTLINT_BIN" lint --strict --quiet "$file"
-    if [ $? -ne 0 ]; then
-        PASS=false
-    fi
+
+# Create temporary directory for staged versions of files
+TMP_DIR=$(mktemp -d)
+
+for FILE in $STAGED_FILES; do
+    mkdir -p "$TMP_DIR/$(dirname "$FILE")"
+    git show ":$FILE" > "$TMP_DIR/$FILE"
 done
+
+# Run SwiftLint on the staged versions
+cd "$TMP_DIR" || exit 1
+"$SWIFTLINT_BIN" lint --strict
+if [ $? -ne 0 ]; then
+    PASS=false
+fi
+cd - >/dev/null || exit 1
+
+# Clean up
+rm -rf "$TMP_DIR"
 
 if ! $PASS; then
     echo "SwiftLint violations detected. Commit aborted."
