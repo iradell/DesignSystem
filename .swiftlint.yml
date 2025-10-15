@@ -1,4 +1,5 @@
 # SwiftLint Configuration for Design System
+# 💻 Credit: Tornike Bardadze
 
 # ----------------------------
 # Disabled Rules
@@ -6,7 +7,7 @@
 disabled_rules:
   - trailing_whitespace       # Allow some flexibility for alignment
   - todo                      # Allow TODOs during design system iteration
-  - file_length                # UI components often get long (but we monitor them manually)
+  - file_length                # UI components often get long (soft warning enforced separately)
   - type_body_length           # Some view structs may be long
   - function_body_length       # Allow long build() or body implementations
   - large_tuple                # Sometimes used for layout tuples
@@ -26,10 +27,18 @@ opt_in_rules:
   - redundant_nil_coalescing
   - unneeded_parentheses_in_closure_argument
   - yoda_condition
+  - mark                       # Encourage MARKs to organize code
+  - file_header                # Optional headers for components
+  - trailing_comma             # Enforce trailing commas for SwiftUI stacks
 
+# ----------------------------
+# Analyzer Rules
+# ----------------------------
 analyzer_rules:
   - explicit_self
   - unused_import
+  - force_cast                # Warn for `as!` usage
+  - force_try                 # Warn for `try!` usage
 
 # ----------------------------
 # Included / Excluded Paths
@@ -81,14 +90,19 @@ nesting:
 vertical_whitespace:
   max_empty_lines: 2
 
+# Optional soft warnings for long files / functions
+file_length:
+  warning: 800    # Soft warning for very long UI components
+function_body_length:
+  warning: 80     # Soft warning for very long functions (body/build)
+
 # ----------------------------
-# Custom Rules (Optional)
+# Custom Rules
 # ----------------------------
 custom_rules:
   avoid_force_unwrap:
     included: ".*\\.swift"
-    name: "Avoid Force Unwrap"
-    regex: "!"
-    message: "Avoid using force unwraps (!) in design system code."
+    name: "Avoid Force Unwrap / Unsafe Casts"
+    regex: "(!|as!|try!)"
+    message: "Avoid using force unwraps (!), force casts (as!) or try! in design system code."
     severity: warning
-
