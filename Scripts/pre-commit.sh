@@ -40,6 +40,7 @@ if [ -z "$STAGED_FILES" ]; then
 fi
 
 PASS=true
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 
 # ----------------------------
 # Create temp dir for staged files
@@ -52,24 +53,23 @@ for FILE in $STAGED_FILES; do
 done
 
 # ----------------------------
-# Run SwiftLint on staged files
+# Run SwiftLint on staged snapshot
 # ----------------------------
-PROJECT_ROOT="$(git rev-parse --show-toplevel)"
-echo -e "${BLUE}🔍 Running SwiftLint...${NC}"
+echo -e "${BLUE}🔍 Running SwiftLint on staged files...${NC}"
+cd "$TMP_DIR" || exit 1
 
-for FILE in $STAGED_FILES; do
-    "$SWIFTLINT_BIN" lint "$FILE" --strict --config "$PROJECT_ROOT/.swiftlint.yml"
-    if [ $? -ne 0 ]; then
-        PASS=false
-    fi
-done
+"$SWIFTLINT_BIN" lint --strict --config "$PROJECT_ROOT/.swiftlint.yml"
+if [ $? -ne 0 ]; then
+    PASS=false
+fi
+cd - >/dev/null || exit 1
 
 # ----------------------------
 # Run SwiftFormat on staged files (sort imports + format)
 # ----------------------------
 echo -e "${BLUE}🧹 Running SwiftFormat on staged files...${NC}"
 for FILE in $STAGED_FILES; do
-    "$SWIFTFORMAT_BIN" "$FILE" --enable sortImports --swiftversion 5
+    "$SWIFTFORMAT_BIN" "$PROJECT_ROOT/$FILE" --enable sortImports --swiftversion 5
     git add "$FILE"
 done
 
