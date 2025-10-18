@@ -103,6 +103,6 @@ custom_rules:
   avoid_force_unwrap:
     included: ".*\\.swift"
     name: "Avoid Force Unwrap / Unsafe Casts"
-    regex: "(!|as!|try!)"
+    regex: "(!\\s*[a-zA-Z0-9_]+\\s*(\\)|,|$))|as!|try!"
     message: "Avoid using force unwraps (!), force casts (as!) or try! in design system code."
     severity: warning

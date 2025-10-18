@@ -8,7 +8,14 @@
 import SwiftUI
 
 struct TestView: View {
+    var isHighlighted: Bool = false
+
     var body: some View {
-        Text("Forced value length")
+        Text("Forced")
+            .multilineTextAlignment(.center)
     }
+}
+
+#Preview {
+    TestView()
 }
