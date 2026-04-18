@@ -1,0 +1,999 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.xctest/Contents/MacOS/DesignSystemPackageTests",
+      "packagePath" : "/Users/giorgiobgaidze/Desktop/DesignSystem",
+      "productName" : "DesignSystemPackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.DesignSystem-arm64-apple-ios18.0-simulator-debug.module" : {
+      "executable" : "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/sources",
+      "importPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSAvatarStack.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSBackground.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSButton.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSChip.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSDivider.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSGlassCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSGlassIcon.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSInterestCategory.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSMatchCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSNavigationHeader.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSStepIndicator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSStepItem.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTabBar.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTag.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTextField.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/DesignSystem.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSColors.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSRadius.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSSpacing.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSTypography.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/swift-version--1DD8884292E29D88.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "DesignSystem",
+      "moduleOutputPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules/DesignSystem.swiftmodule",
+      "objects" : [
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSAvatarStack.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSBackground.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSButton.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSChip.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSDivider.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSGlassCard.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSGlassIcon.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSInterestCategory.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSMatchCard.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSNavigationHeader.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSStepIndicator.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSStepItem.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTabBar.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTag.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTextField.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DesignSystem.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSColors.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSRadius.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSSpacing.swift.o",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTypography.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-ios18.0-simulator",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/include/DesignSystem-Swift.h",
+        "-swift-version",
+        "6",
+        "-plugin-path",
+        "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "designsystem"
+      ],
+      "outputFileMapPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSAvatarStack.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSBackground.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSButton.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSChip.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSDivider.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSGlassCard.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSGlassIcon.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSInterestCategory.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSMatchCard.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSNavigationHeader.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSStepIndicator.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSStepItem.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTabBar.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTag.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTextField.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DesignSystem.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSColors.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSRadius.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSSpacing.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTypography.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules/DesignSystem.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSAvatarStack.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSBackground.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSButton.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSChip.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSDivider.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSGlassCard.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSGlassIcon.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSInterestCategory.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSMatchCard.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSNavigationHeader.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSStepIndicator.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSStepItem.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTabBar.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTag.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTextField.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/DesignSystem.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSColors.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSRadius.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSSpacing.swift",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSTypography.swift"
+      ],
+      "tempsPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.DesignSystemPackageTests-arm64-apple-ios18.0-simulator-debug.module" : {
+      "executable" : "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/sources",
+      "importPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/swift-version--1DD8884292E29D88.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules/DesignSystemTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "DesignSystemPackageTests",
+      "moduleOutputPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules/DesignSystemPackageTests.swiftmodule",
+      "objects" : [
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-ios18.0-simulator",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/include/DesignSystemPackageTests-Swift.h",
+        "-plugin-path",
+        "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "designsystem"
+      ],
+      "outputFileMapPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules/DesignSystemPackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.DesignSystemTests-arm64-apple-ios18.0-simulator-debug.module" : {
+      "executable" : "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build/sources",
+      "importPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Tests/DesignSystemTests/DesignSystemTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/swift-version--1DD8884292E29D88.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules/DesignSystem.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "DesignSystemTests",
+      "moduleOutputPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules/DesignSystemTests.swiftmodule",
+      "objects" : [
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build/DesignSystemTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-ios18.0-simulator",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "6",
+        "-plugin-path",
+        "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "designsystem"
+      ],
+      "outputFileMapPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build/DesignSystemTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules/DesignSystemTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/giorgiobgaidze/Desktop/DesignSystem/Tests/DesignSystemTests/DesignSystemTests.swift"
+      ],
+      "tempsPath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "DesignSystem" : [
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "DesignSystem",
+      "-package-name",
+      "designsystem",
+      "-c",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSAvatarStack.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSBackground.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSButton.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSChip.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSDivider.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSGlassCard.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSGlassIcon.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSInterestCategory.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSMatchCard.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSNavigationHeader.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSStepIndicator.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSStepItem.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTabBar.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTag.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTextField.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/DesignSystem.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSColors.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSRadius.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSSpacing.swift",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSTypography.swift",
+      "-I",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules",
+      "-target",
+      "arm64-apple-ios18.0-simulator",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/include/DesignSystem-Swift.h",
+      "-swift-version",
+      "6",
+      "-plugin-path",
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "designsystem",
+      "-driver-use-frontend-path",
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc"
+    ],
+    "DesignSystemPackageTests" : [
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "DesignSystemPackageTests",
+      "-package-name",
+      "designsystem",
+      "-c",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.derived/runner.swift",
+      "-I",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules",
+      "-target",
+      "arm64-apple-ios18.0-simulator",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/include/DesignSystemPackageTests-Swift.h",
+      "-plugin-path",
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "designsystem",
+      "-driver-use-frontend-path",
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc"
+    ],
+    "DesignSystemTests" : [
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "DesignSystemTests",
+      "-package-name",
+      "designsystem",
+      "-c",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/Tests/DesignSystemTests/DesignSystemTests.swift",
+      "-I",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/Modules",
+      "-target",
+      "arm64-apple-ios18.0-simulator",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "6",
+      "-plugin-path",
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "designsystem",
+      "-driver-use-frontend-path",
+      "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "DesignSystem" : [
+
+    ],
+    "DesignSystemPackageTests" : [
+      "DesignSystemTests",
+      "DesignSystem"
+    ],
+    "DesignSystemTests" : [
+      "DesignSystem"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSAvatarStack.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSBackground.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSButton.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSChip.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSDivider.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSGlassCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSGlassIcon.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSInterestCategory.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSMatchCard.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSNavigationHeader.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSStepIndicator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSStepItem.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTabBar.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTag.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Components/DSTextField.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/DesignSystem.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSColors.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSRadius.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSSpacing.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Sources/DesignSystem/Tokens/DSTypography.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/sources"
+    },
+    "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/sources"
+    },
+    "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSAvatarStack.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSBackground.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSButton.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSChip.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSColors.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSDivider.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSGlassCard.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSGlassIcon.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSInterestCategory.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSMatchCard.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSNavigationHeader.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSRadius.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSSpacing.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSStepIndicator.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSStepItem.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTabBar.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTag.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTextField.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DSTypography.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystem.build/DesignSystem.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build/DesignSystemTests.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemPackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Desktop/DesignSystem/Tests/DesignSystemTests/DesignSystemTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/DesignSystemTests.build/sources"
+    },
+    "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/swift-version--1DD8884292E29D88.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/giorgiobgaidze/Library/Developer/Toolchains/swift-6.2-RELEASE.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/giorgiobgaidze/Desktop/DesignSystem/.build/arm64-apple-ios-simulator/debug/swift-version--1DD8884292E29D88.txt"
+    }
+  }
+}
