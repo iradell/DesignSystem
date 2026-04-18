@@ -1,0 +1,29 @@
+# Build artifacts
+.build/
+Build/
+DerivedData/
+
+# Swift Package Manager
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+.swiftpm/xcode/package.xcworkspace/xcshareddata/
+Package.resolved
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# IDE
+*.swp
+*~
+.vscode/
+.idea/
+
+# Claude
+.claude/
