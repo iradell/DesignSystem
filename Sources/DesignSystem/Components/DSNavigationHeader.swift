@@ -160,7 +160,10 @@ public struct DSCompactTimer: View {
         .background(DSColors.onboardingGradient)
 
         DSNavigationHeader(onBack: {}) {
-            DSStepHeader(label: "Step 2 of 3", totalSteps: 3, currentStep: 1)
+            Text("STEP 2 OF 3")
+                .font(DSTypography.labelSmall)
+                .foregroundStyle(DSColors.textSecondary)
+                .tracking(2)
         } trailing: {
             EmptyView()
         }

@@ -134,10 +134,16 @@ public enum DSSocialProvider: String, CaseIterable, Sendable {
 
 public struct DSSocialButton: View {
     private let provider: DSSocialProvider
+    private let showLabel: Bool
     private let action: () -> Void
 
-    public init(provider: DSSocialProvider, action: @escaping () -> Void) {
+    public init(
+        provider: DSSocialProvider,
+        showLabel: Bool = true,
+        action: @escaping () -> Void
+    ) {
         self.provider = provider
+        self.showLabel = showLabel
         self.action = action
     }
 
@@ -145,12 +151,14 @@ public struct DSSocialButton: View {
         Button(action: action) {
             HStack(spacing: DSSpacing.sm) {
                 Image(systemName: provider.iconName)
-                    .font(.system(size: 18))
+                    .font(.system(size: showLabel ? 18 : 20))
                     .foregroundStyle(DSColors.textPrimary)
 
-                Text(provider.rawValue)
-                    .font(DSTypography.labelLarge)
-                    .foregroundStyle(DSColors.textPrimary)
+                if showLabel {
+                    Text(provider.rawValue)
+                        .font(DSTypography.labelLarge)
+                        .foregroundStyle(DSColors.textPrimary)
+                }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 56)
@@ -219,12 +227,20 @@ public struct DSActionButton: View {
 }
 
 #Preview("Social Buttons") {
-    LazyVGrid(columns: [
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ], spacing: 16) {
-        ForEach(DSSocialProvider.allCases, id: \.self) { provider in
-            DSSocialButton(provider: provider) {}
+    VStack(spacing: 20) {
+        LazyVGrid(columns: [
+            GridItem(.flexible()),
+            GridItem(.flexible())
+        ], spacing: 16) {
+            ForEach(DSSocialProvider.allCases, id: \.self) { provider in
+                DSSocialButton(provider: provider) {}
+            }
+        }
+
+        HStack(spacing: 12) {
+            ForEach(DSSocialProvider.allCases, id: \.self) { provider in
+                DSSocialButton(provider: provider, showLabel: false) {}
+            }
         }
     }
     .padding()

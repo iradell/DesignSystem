@@ -80,6 +80,8 @@ public struct DSHeroPromptCard: View {
     private let prompt: String
     private let participantCount: Int
     private let buttonTitle: String
+    private let isExpanded: Bool
+    @Binding private var answerText: String
     private let action: () -> Void
 
     public init(
@@ -88,6 +90,8 @@ public struct DSHeroPromptCard: View {
         prompt: String,
         participantCount: Int = 0,
         buttonTitle: String = "Answer Now",
+        isExpanded: Bool = false,
+        answerText: Binding<String> = .constant(""),
         action: @escaping () -> Void
     ) {
         self.tag = tag
@@ -95,6 +99,8 @@ public struct DSHeroPromptCard: View {
         self.prompt = prompt
         self.participantCount = participantCount
         self.buttonTitle = buttonTitle
+        self.isExpanded = isExpanded
+        self._answerText = answerText
         self.action = action
     }
 
@@ -117,6 +123,10 @@ public struct DSHeroPromptCard: View {
                 .font(DSTypography.displaySmall.italic())
                 .foregroundStyle(DSColors.textPrimary)
                 .tracking(-0.6)
+
+            if isExpanded {
+                DSAnswerInput(text: $answerText)
+            }
 
             HStack {
                 if participantCount > 0 {

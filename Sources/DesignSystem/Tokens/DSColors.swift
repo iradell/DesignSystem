@@ -44,6 +44,11 @@ public enum DSColors {
         endPoint: .trailing
     )
 
+    // MARK: - Validation
+    public static let checkGreen = Color(hex: 0x059669)
+    public static let checkGreenBg = Color(hex: 0xD1FAE5)
+    public static let checkGray = Color(hex: 0xF3F4F6)
+
     // MARK: - Misc
     public static let divider = Color(hex: 0xE5E7EB).opacity(0.5)
     public static let badgeBg = Color(hex: 0x6366F1).opacity(0.9)
