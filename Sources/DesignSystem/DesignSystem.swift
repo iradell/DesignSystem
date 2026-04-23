@@ -50,6 +50,13 @@
 //   DSInterestCategory   - Interest section with icon header and chips
 //   DSGlassIcon          - App logo / dark glass icon
 //   DSIllustrationIcon   - Light glass illustration icon
+//   DSSearchBar          - Glass search bar with magnifying glass icon
+//   DSChatBubble         - Chat message bubble (sent/received variants)
+//   DSQuotedChatBubble   - Sent bubble with embedded quoted vibe
+//   DSChatInputBar       - Glass capsule chat input with send button
+//   DSChatListItem       - Chat list row with avatar, name, preview, unread dot
+//   DSContextPill        - Small glass pill with sparkle icon + label
+//   DSPopoverMenu        - Glass dropdown menu with action items
 //   DSGradientBackground - Full-screen gradient background
 //   FlowLayout           - Wrapping flow layout for chips
 //
