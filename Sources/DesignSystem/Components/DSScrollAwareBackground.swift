@@ -3,21 +3,27 @@ import SwiftUI
 // MARK: - Scroll-Aware Navigation Background Modifier
 
 /// A `ViewModifier` that transitions a view's background from fully transparent to a
-/// solid color as the user scrolls.
+/// frosted-glass material as the user scrolls.
 ///
 /// Attach it to any header/navigation bar view. Drive the `scrollY` binding from an
 /// `onScrollGeometryChange` listener on the corresponding `ScrollView`.
 ///
 /// **Formula:** `opacity = min(1, max(0, scrollY / tolerance))`
 ///
+/// At `scrollY == 0` the header is fully transparent — no material, no divider.
+/// As the user scrolls the blur fades in, letting the gradient and content behind
+/// the header show through with the frosted-glass effect rather than being covered
+/// by a flat tint color.
+///
 /// - Parameters:
 ///   - scrollY: The current vertical scroll offset (pts from top). Sourced from
 ///     `onScrollGeometryChange { $0.contentOffset.y }` on the owning `ScrollView`.
 ///   - tolerance: How many points of scroll map to the full 0→1 opacity range.
 ///     Default `100` — opacity reaches 1 after 100 pts of scroll.
-///   - color: The solid color the background fades to. Defaults to `DSColors.bgLightAlt`,
-///     a near-white that matches the `form` gradient's base and keeps the header
-///     legible without introducing a dark mode jump.
+///   - material: The SwiftUI `Material` that fades in. Defaults to `.ultraThinMaterial`
+///     — the lightest blur, which lets the gradient behind the header bleed through
+///     without obscuring it. Pass `.thinMaterial`, `.regularMaterial`, etc. for a
+///     stronger blur if the design calls for it.
 ///   - showDivider: When `true` a 1-pt divider fades in below the header alongside
 ///     the background, giving a subtle scroll-depth cue. Defaults to `true`.
 ///
@@ -32,7 +38,7 @@ public struct DSScrollAwareNavigationBackground: ViewModifier {
 
     private let scrollY: Binding<CGFloat>
     private let tolerance: CGFloat
-    private let color: Color
+    private let material: Material
     private let showDivider: Bool
 
     // MARK: Derived
@@ -46,12 +52,12 @@ public struct DSScrollAwareNavigationBackground: ViewModifier {
     public init(
         scrollY: Binding<CGFloat>,
         tolerance: CGFloat = 100,
-        color: Color = DSColors.bgLightAlt,
+        material: Material = .ultraThinMaterial,
         showDivider: Bool = true
     ) {
         self.scrollY = scrollY
         self.tolerance = tolerance
-        self.color = color
+        self.material = material
         self.showDivider = showDivider
     }
 
@@ -60,17 +66,10 @@ public struct DSScrollAwareNavigationBackground: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .background(
-                ZStack {
-                    // Material layer: fades in together with the solid tint so at
-                    // scrollY == 0 the header is 100% transparent — no tint, no blur.
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .opacity(backgroundOpacity)
-
-                    color
-                        .opacity(backgroundOpacity)
-                }
-                .animation(.easeInOut(duration: 0.15), value: backgroundOpacity)
+                Rectangle()
+                    .fill(material)
+                    .opacity(backgroundOpacity)
+                    .animation(.easeInOut(duration: 0.15), value: backgroundOpacity)
             )
             .overlay(alignment: .bottom) {
                 if showDivider {
@@ -87,25 +86,25 @@ public struct DSScrollAwareNavigationBackground: ViewModifier {
 // MARK: - View Extension
 
 extension View {
-    /// Applies a scroll-aware navigation background that fades from transparent to
-    /// `color` as `scrollY` increases from 0 to `tolerance`.
+    /// Applies a scroll-aware navigation background that fades from fully transparent
+    /// to a frosted-glass `material` as `scrollY` increases from 0 to `tolerance`.
     ///
     /// - Parameters:
     ///   - scrollY: Binding to the scroll offset updated via `onScrollGeometryChange`.
     ///   - tolerance: Points of scroll over which opacity transitions 0→1. Default `100`.
-    ///   - color: Target background color. Default `DSColors.bgLightAlt`.
+    ///   - material: SwiftUI `Material` to blur in. Default `.ultraThinMaterial`.
     ///   - showDivider: Whether to show a bottom divider that fades in with the background. Default `true`.
     public func dsScrollAwareNavigationBackground(
         scrollY: Binding<CGFloat>,
         tolerance: CGFloat = 100,
-        color: Color = DSColors.bgLightAlt,
+        material: Material = .ultraThinMaterial,
         showDivider: Bool = true
     ) -> some View {
         modifier(
             DSScrollAwareNavigationBackground(
                 scrollY: scrollY,
                 tolerance: tolerance,
-                color: color,
+                material: material,
                 showDivider: showDivider
             )
         )
