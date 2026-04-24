@@ -130,6 +130,25 @@ public enum DSSocialProvider: String, CaseIterable, Sendable {
         case .twitter: "brand_twitter"
         }
     }
+
+    /// Visual icon size when the button shows a label alongside the icon.
+    /// Google's PNG has tighter source padding, so its glyph renders ~20% larger
+    /// at the same point size — compensate by using 16 pt instead of 20 pt.
+    public var iconSize: CGFloat {
+        switch self {
+        case .google: 16
+        default: 20
+        }
+    }
+
+    /// Visual icon size for the icon-only (no-label) variant.
+    /// Same 20 % reduction applied: Google = 20 pt, others = 24 pt.
+    public var iconOnlySize: CGFloat {
+        switch self {
+        case .google: 20
+        default: 24
+        }
+    }
 }
 
 public struct DSSocialButton: View {
@@ -154,7 +173,10 @@ public struct DSSocialButton: View {
                     .renderingMode(.original)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: showLabel ? 20 : 24, height: showLabel ? 20 : 24)
+                    .frame(
+                        width: showLabel ? provider.iconSize : provider.iconOnlySize,
+                        height: showLabel ? provider.iconSize : provider.iconOnlySize
+                    )
 
                 if showLabel {
                     Text(provider.rawValue)
