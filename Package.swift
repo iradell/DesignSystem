@@ -15,7 +15,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "DesignSystem"
+            name: "DesignSystem",
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "DesignSystemTests",

@@ -122,12 +122,12 @@ public enum DSSocialProvider: String, CaseIterable, Sendable {
     case facebook = "Facebook"
     case twitter = "Twitter"
 
-    public var iconName: String {
+    public var assetName: String {
         switch self {
-        case .apple: "apple.logo"
-        case .google: "g.circle.fill"
-        case .facebook: "f.circle.fill"
-        case .twitter: "bird.fill"
+        case .apple: "brand_apple"
+        case .google: "brand_google"
+        case .facebook: "brand_facebook"
+        case .twitter: "brand_twitter"
         }
     }
 }
@@ -150,9 +150,14 @@ public struct DSSocialButton: View {
     public var body: some View {
         Button(action: action) {
             HStack(spacing: DSSpacing.sm) {
-                Image(systemName: provider.iconName)
-                    .font(.system(size: showLabel ? 18 : 20))
-                    .foregroundStyle(DSColors.textPrimary)
+                Image(provider.assetName, bundle: .module)
+                    .renderingMode(.original)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(
+                        width: showLabel ? 20 : 24,
+                        height: showLabel ? 20 : 24
+                    )
 
                 if showLabel {
                     Text(provider.rawValue)

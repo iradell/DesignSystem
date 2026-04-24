@@ -62,6 +62,10 @@ public struct DSGlassTextField: View {
                 RoundedRectangle(cornerRadius: DSRadius.lg)
                     .stroke(DSColors.glassBorder, lineWidth: 1)
             )
+            .contentShape(RoundedRectangle(cornerRadius: DSRadius.lg))
+            .onTapGesture {
+                isFocused = true
+            }
         }
     }
 
@@ -112,6 +116,10 @@ public struct DSDOBField: View {
                 .stroke(DSColors.glassBorderStrong, lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.05), radius: 10, y: 4)
+        .contentShape(RoundedRectangle(cornerRadius: DSRadius.xl))
+        .onTapGesture {
+            isFocused = true
+        }
     }
 
     private var promptText: Text {

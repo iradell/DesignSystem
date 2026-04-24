@@ -40,6 +40,10 @@ public struct DSAnswerInput: View {
                         .allowsHitTesting(false)
                 }
             }
+            .contentShape(RoundedRectangle(cornerRadius: DSRadius.sm))
+            .onTapGesture {
+                isFocused = true
+            }
     }
 }
 

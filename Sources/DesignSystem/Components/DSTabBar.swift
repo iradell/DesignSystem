@@ -48,6 +48,7 @@ public struct DSTabBar: View {
             .padding(.vertical, 1)
             .frame(height: 80)
             .glassEffect(.regular, in: .capsule)
+            .contentShape(Capsule())
         }
         .shadow(color: .black.opacity(0.2), radius: 25, y: 12)
     }
@@ -65,6 +66,7 @@ public struct DSTabBar: View {
         .frame(height: 80)
         .background(.ultraThickMaterial)
         .clipShape(Capsule())
+        .contentShape(Capsule())
         .overlay(
             Capsule()
                 .stroke(DSColors.glassBorder, lineWidth: 1)
@@ -82,11 +84,15 @@ public struct DSTabBar: View {
                 selectedId = item.id
             }
         } label: {
-            if isSelected {
-                selectedTab(item)
-            } else {
-                unselectedTab(item)
+            ZStack {
+                if isSelected {
+                    selectedTab(item)
+                } else {
+                    unselectedTab(item)
+                }
             }
+            .frame(maxHeight: .infinity)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }

@@ -1,79 +1,30 @@
 import SwiftUI
 
-// MARK: - Navigation Header
-
-public struct DSNavigationHeader: View {
-    private let onBack: (() -> Void)?
-    private let trailingContent: AnyView?
-    private let centerContent: AnyView?
-
-    public init(
-        onBack: (() -> Void)? = nil
-    ) {
-        self.onBack = onBack
-        self.trailingContent = nil
-        self.centerContent = nil
-    }
-
-    public init<Trailing: View>(
-        onBack: (() -> Void)? = nil,
-        @ViewBuilder trailing: () -> Trailing
-    ) {
-        self.onBack = onBack
-        self.trailingContent = AnyView(trailing())
-        self.centerContent = nil
-    }
-
-    public init<Center: View, Trailing: View>(
-        onBack: (() -> Void)? = nil,
-        @ViewBuilder center: () -> Center,
-        @ViewBuilder trailing: () -> Trailing
-    ) {
-        self.onBack = onBack
-        self.centerContent = AnyView(center())
-        self.trailingContent = AnyView(trailing())
-    }
-
-    public var body: some View {
-        HStack {
-            if let onBack {
-                DSBackButton(action: onBack)
-            }
-
-            Spacer()
-
-            if let centerContent {
-                centerContent
-                Spacer()
-            }
-
-            if let trailingContent {
-                trailingContent
-            }
-        }
-        .padding(.horizontal, DSSpacing.xxl)
-        .padding(.top, DSSpacing.xxxxl)
-        .padding(.bottom, DSSpacing.md)
-    }
-}
-
 // MARK: - Home Header
 
 public struct DSHomeHeader: View {
     private let title: String
     private let avatar: Image?
     private let timerText: String?
+    /// Controls whether the compact timer pill is visible.
+    /// Pass `false` (or bind to a `Bool`) when the session timer is already shown
+    /// in the page content (e.g. the hero prompt card is visible) so that only one
+    /// timer is rendered at a time.
+    /// Defaults to `true` so all existing callers keep working without changes.
+    private let isTimerVisible: Bool
     private let onSettingsTap: () -> Void
 
     public init(
         title: String = "Discover",
         avatar: Image? = nil,
         timerText: String? = nil,
+        isTimerVisible: Bool = true,
         onSettingsTap: @escaping () -> Void
     ) {
         self.title = title
         self.avatar = avatar
         self.timerText = timerText
+        self.isTimerVisible = isTimerVisible
         self.onSettingsTap = onSettingsTap
     }
 
@@ -87,10 +38,16 @@ public struct DSHomeHeader: View {
                     .foregroundStyle(DSColors.textPrimary)
                     .tracking(-0.5)
 
-                if let timerText {
+                if let timerText, isTimerVisible {
                     DSCompactTimer(text: timerText)
+                        .transition(
+                            .opacity.combined(with: .offset(y: -DSSpacing.xs))
+                        )
                 }
             }
+            // Reserve the height the timer pill would occupy so the header doesn't
+            // jump in size when the timer fades in/out.
+            .frame(minHeight: 28)
 
             Spacer()
 
@@ -110,6 +67,7 @@ public struct DSHomeHeader: View {
         .padding(.horizontal, DSSpacing.xl)
         .padding(.vertical, DSSpacing.md)
         .background(.ultraThinMaterial)
+        .animation(.smooth(duration: 0.3), value: isTimerVisible)
     }
 }
 
@@ -146,32 +104,12 @@ public struct DSCompactTimer: View {
 
 // MARK: - Previews
 
-#Preview("Navigation Headers") {
-    VStack(spacing: 0) {
-        DSNavigationHeader(onBack: {})
-            .background(DSColors.onboardingGradient)
-
-        DSNavigationHeader(onBack: {}) {
-            Text("SKIP")
-                .font(DSTypography.buttonSmall)
-                .foregroundStyle(DSColors.textSecondary)
-                .tracking(1.4)
-        }
-        .background(DSColors.onboardingGradient)
-
-        DSNavigationHeader(onBack: {}) {
-            Text("STEP 2 OF 3")
-                .font(DSTypography.labelSmall)
-                .foregroundStyle(DSColors.textSecondary)
-                .tracking(2)
-        } trailing: {
-            EmptyView()
-        }
-        .background(DSColors.onboardingGradient)
-    }
-}
-
 #Preview("Home Header") {
-    DSHomeHeader(timerText: "01:24:12") {}
-        .background(Color(hex: 0xF8F9FA))
+    VStack(spacing: 0) {
+        DSHomeHeader(timerText: "01:24:12") {}
+            .background(Color(hex: 0xF8F9FA))
+
+        DSHomeHeader(timerText: "01:24:12", isTimerVisible: false) {}
+            .background(Color(hex: 0xF8F9FA))
+    }
 }
