@@ -115,12 +115,14 @@ public struct DSMatchesSection: View {
                 }
                 .buttonStyle(.plain)
             }
+            .padding(.horizontal, DSSpacing.xl)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: DSSpacing.md) {
                     content
                 }
             }
+            .contentMargins(.horizontal, DSSpacing.xl, for: .scrollContent)
         }
     }
 }
