@@ -49,6 +49,11 @@ public enum DSColors {
     public static let checkGreenBg = Color(hex: 0xD1FAE5)
     public static let checkGray = Color(hex: 0xF3F4F6)
 
+    // MARK: - Destructive
+    public static let warning = Color(hex: 0xF97316)
+    public static let destructive = Color(hex: 0xEF4444)
+    public static let onlineGreen = Color(hex: 0x22C55E)
+
     // MARK: - Misc
     public static let divider = Color(hex: 0xE5E7EB).opacity(0.5)
     public static let badgeBg = Color(hex: 0x6366F1).opacity(0.9)
