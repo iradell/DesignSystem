@@ -65,12 +65,13 @@ public struct DSScrollAwareNavigationBackground: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .background(
+            .background(alignment: .top) {
                 Rectangle()
                     .fill(material)
                     .opacity(backgroundOpacity)
+                    .ignoresSafeArea(edges: .top)
                     .animation(.easeInOut(duration: 0.15), value: backgroundOpacity)
-            )
+            }
             .overlay(alignment: .bottom) {
                 if showDivider {
                     Rectangle()
