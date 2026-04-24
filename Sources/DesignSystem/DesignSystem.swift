@@ -40,7 +40,6 @@
 //   DSMatchBadge         - Match percentage badge
 //   DSAvatar             - Circular avatar with border
 //   DSAvatarStack        - Overlapping avatar stack with count
-//   DSNavigationHeader   - Flexible navigation header with back button
 //   DSHomeHeader         - Home screen header with avatar and timer
 //   DSCompactTimer       - Compact countdown pill
 //   DSTabBar             - Bottom floating tab bar
@@ -54,4 +53,6 @@
 //   FlowLayout           - Wrapping flow layout for chips
 //
 // MODIFIERS:
-//   .dsBackground(_:)   - Apply onboarding or form gradient background
+//   .dsBackground(_:)                     - Apply onboarding or form gradient background
+//   .dsNavigationBar(title:onBack:trailing:) - Configure system nav bar with DS chrome
+//   .dsScrollAwareNavigationBackground(…) - Fade header background 0→1 as user scrolls
