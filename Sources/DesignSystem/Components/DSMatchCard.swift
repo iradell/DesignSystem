@@ -8,19 +8,22 @@ public struct DSMatchCard: View {
     private let matchPercentage: Int
     private let subtitle: String
     private let image: Image?
+    private let imageURL: URL?
 
     public init(
         name: String,
         age: Int,
         matchPercentage: Int,
         subtitle: String,
-        image: Image? = nil
+        image: Image? = nil,
+        imageURL: URL? = nil
     ) {
         self.name = name
         self.age = age
         self.matchPercentage = matchPercentage
         self.subtitle = subtitle
         self.image = image
+        self.imageURL = imageURL
     }
 
     public var body: some View {
@@ -60,23 +63,40 @@ public struct DSMatchCard: View {
 
     @ViewBuilder
     private var backgroundContent: some View {
-        if let image {
+        if let imageURL {
+            AsyncImage(url: imageURL) { phase in
+                switch phase {
+                case .success(let img):
+                    img
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 256, height: 340)
+                default:
+                    placeholderContent
+                }
+            }
+        } else if let image {
             image
                 .resizable()
                 .scaledToFill()
                 .frame(width: 256, height: 340)
         } else {
-            LinearGradient(
-                colors: [Color(hex: 0x6366F1).opacity(0.3), Color(hex: 0x7C3AED).opacity(0.3)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .overlay(
-                Image(systemName: "person.fill")
-                    .font(.system(size: 60))
-                    .foregroundStyle(Color.white.opacity(0.3))
-            )
+            placeholderContent
         }
+    }
+
+    @ViewBuilder
+    private var placeholderContent: some View {
+        LinearGradient(
+            colors: [Color(hex: 0x6366F1).opacity(0.3), Color(hex: 0x7C3AED).opacity(0.3)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .overlay(
+            Image(systemName: "person.fill")
+                .font(.system(size: 60))
+                .foregroundStyle(Color.white.opacity(0.3))
+        )
     }
 }
 
