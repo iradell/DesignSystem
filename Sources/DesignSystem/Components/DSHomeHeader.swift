@@ -37,9 +37,12 @@ public struct DSHomeHeader: View {
                     .font(DSTypography.headingSmall)
                     .foregroundStyle(DSColors.textPrimary)
                     .tracking(-0.5)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
 
                 if let timerText, isTimerVisible {
                     DSCompactTimer(text: timerText)
+                        .layoutPriority(1)
                         .transition(
                             .opacity.combined(with: .offset(y: -DSSpacing.xs))
                         )
@@ -66,7 +69,6 @@ public struct DSHomeHeader: View {
         }
         .padding(.horizontal, DSSpacing.xl)
         .padding(.vertical, DSSpacing.md)
-        .background(.ultraThinMaterial)
         .animation(.smooth(duration: 0.3), value: isTimerVisible)
     }
 }
@@ -90,6 +92,8 @@ public struct DSCompactTimer: View {
                 .font(DSTypography.bodySmall)
                 .foregroundStyle(DSColors.accentIndigo)
                 .tracking(-0.3)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
         }
         .padding(.horizontal, 11)
         .padding(.vertical, DSSpacing.xxs)

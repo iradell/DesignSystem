@@ -60,9 +60,17 @@ public struct DSScrollAwareNavigationBackground: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .background(
-                color
-                    .opacity(backgroundOpacity)
-                    .animation(.easeInOut(duration: 0.15), value: backgroundOpacity)
+                ZStack {
+                    // Material layer: fades in together with the solid tint so at
+                    // scrollY == 0 the header is 100% transparent — no tint, no blur.
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .opacity(backgroundOpacity)
+
+                    color
+                        .opacity(backgroundOpacity)
+                }
+                .animation(.easeInOut(duration: 0.15), value: backgroundOpacity)
             )
             .overlay(alignment: .bottom) {
                 if showDivider {
