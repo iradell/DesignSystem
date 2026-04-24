@@ -4,29 +4,38 @@ import SwiftUI
 
 public struct DSAvatar: View {
     private let image: Image?
+    private let imageURL: URL?
     private let size: CGFloat
     private let showBorder: Bool
 
-    public init(image: Image? = nil, size: CGFloat = 40, showBorder: Bool = true) {
+    public init(image: Image? = nil, imageURL: URL? = nil, size: CGFloat = 40, showBorder: Bool = true) {
         self.image = image
+        self.imageURL = imageURL
         self.size = size
         self.showBorder = showBorder
     }
 
     public var body: some View {
         Group {
-            if let image {
+            if let imageURL {
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .success(let loaded):
+                        loaded
+                            .resizable()
+                            .scaledToFill()
+                    case .empty, .failure:
+                        placeholder
+                    @unknown default:
+                        placeholder
+                    }
+                }
+            } else if let image {
                 image
                     .resizable()
                     .scaledToFill()
             } else {
-                Circle()
-                    .fill(DSColors.glassBg)
-                    .overlay(
-                        Image(systemName: "person.fill")
-                            .font(.system(size: size * 0.4))
-                            .foregroundStyle(DSColors.textMuted)
-                    )
+                placeholder
             }
         }
         .frame(width: size, height: size)
@@ -35,6 +44,16 @@ public struct DSAvatar: View {
             showBorder ? Circle().stroke(Color.white, lineWidth: 2) : nil
         )
         .shadow(color: .black.opacity(0.05), radius: 2, y: 1)
+    }
+
+    private var placeholder: some View {
+        Circle()
+            .fill(DSColors.glassBg)
+            .overlay(
+                Image(systemName: "person.fill")
+                    .font(.system(size: size * 0.4))
+                    .foregroundStyle(DSColors.textMuted)
+            )
     }
 }
 

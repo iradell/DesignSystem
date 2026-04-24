@@ -5,6 +5,7 @@ import SwiftUI
 public struct DSHomeHeader: View {
     private let title: String
     private let avatar: Image?
+    private let avatarURL: URL?
     private let timerText: String?
     /// Controls whether the compact timer pill is visible.
     /// Pass `false` (or bind to a `Bool`) when the session timer is already shown
@@ -17,12 +18,14 @@ public struct DSHomeHeader: View {
     public init(
         title: String = "Discover",
         avatar: Image? = nil,
+        avatarURL: URL? = nil,
         timerText: String? = nil,
         isTimerVisible: Bool = true,
         onSettingsTap: @escaping () -> Void
     ) {
         self.title = title
         self.avatar = avatar
+        self.avatarURL = avatarURL
         self.timerText = timerText
         self.isTimerVisible = isTimerVisible
         self.onSettingsTap = onSettingsTap
@@ -31,7 +34,7 @@ public struct DSHomeHeader: View {
     public var body: some View {
         HStack {
             HStack(spacing: 10) {
-                DSAvatar(image: avatar, size: 40)
+                DSAvatar(image: avatar, imageURL: avatarURL, size: 40)
 
                 Text(title)
                     .font(DSTypography.headingSmall)
