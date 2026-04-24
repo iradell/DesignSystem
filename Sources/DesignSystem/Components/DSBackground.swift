@@ -27,7 +27,7 @@ public struct DSGradientBackground: View {
 
     private var onboardingBackground: some View {
         LinearGradient(
-            colors: [Color(hex: 0xF2F2F7), Color(hex: 0xE5E7FF)],
+            colors: [Color(hex: 0xE8E9F4), Color(hex: 0xC7D0FF)],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
@@ -36,29 +36,29 @@ public struct DSGradientBackground: View {
 
     private var formBackground: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color(hex: 0xE8E9F4).ignoresSafeArea()
 
             // Top-left indigo glow
             RadialGradient(
-                colors: [Color(hex: 0xE0E7FF), Color(hex: 0xE0E7FF).opacity(0)],
+                colors: [Color(hex: 0xC7D0FF), Color(hex: 0xC7D0FF).opacity(0)],
                 center: .topLeading,
                 startRadius: 0,
                 endRadius: 400
             )
             .ignoresSafeArea()
 
-            // Top-right purple glow
+            // Top-right violet glow
             RadialGradient(
-                colors: [Color(hex: 0xF5D0FE), Color(hex: 0xF5D0FE).opacity(0)],
+                colors: [Color(hex: 0xD4CCFE), Color(hex: 0xD4CCFE).opacity(0)],
                 center: .topTrailing,
                 startRadius: 0,
                 endRadius: 400
             )
             .ignoresSafeArea()
 
-            // Bottom-right pink glow
+            // Bottom-right lavender glow
             RadialGradient(
-                colors: [Color(hex: 0xFDF4FF), Color(hex: 0xFDF4FF).opacity(0)],
+                colors: [Color(hex: 0xE0DAFF), Color(hex: 0xE0DAFF).opacity(0)],
                 center: .bottomTrailing,
                 startRadius: 0,
                 endRadius: 400
