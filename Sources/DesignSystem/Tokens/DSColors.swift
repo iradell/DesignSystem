@@ -10,8 +10,8 @@ public enum DSColors {
 
     // MARK: - Backgrounds
     public static let bgDark = Color(hex: 0x1C1C1E)
-    public static let bgLight = Color(hex: 0xF2F2F7)
-    public static let bgLightAlt = Color(hex: 0xF8F9FA)
+    public static let bgLight = Color(hex: 0xE8E9F4)
+    public static let bgLightAlt = Color(hex: 0xF0F1F8)
 
     // MARK: - Accent
     public static let accentIndigo = Color(hex: 0x6366F1)
@@ -27,7 +27,7 @@ public enum DSColors {
 
     // MARK: - Gradients
     public static let onboardingGradient = LinearGradient(
-        colors: [Color(hex: 0xF2F2F7), Color(hex: 0xE5E7FF)],
+        colors: [Color(hex: 0xE8E9F4), Color(hex: 0xC7D0FF)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
@@ -58,8 +58,8 @@ public enum DSColors {
     public static let divider = Color(hex: 0xE5E7EB).opacity(0.5)
     public static let badgeBg = Color(hex: 0x6366F1).opacity(0.9)
     public static let tagBg = Color.white.opacity(0.6)
-    public static let chipGlow = Color(hex: 0xE0E7FF)
-    public static let indigoGlow = Color(hex: 0xE0E7FF)
+    public static let chipGlow = Color(hex: 0xC7D0FF)
+    public static let indigoGlow = Color(hex: 0xC7D0FF)
 }
 
 // MARK: - Color Hex Initializer
