@@ -3,6 +3,28 @@ import SwiftUI
 import UIKit
 #endif
 
+/// Zero-width space — invisible Unicode character used as a sentinel
+/// inside `DSDOBField` so we can detect a "backspace pressed while
+/// the visible text was already empty" event from the iOS soft
+/// keyboard.
+///
+/// SwiftUI's `TextField` doesn't fire `onChange` when the binding's
+/// value would stay the empty string (empty → backspace → still empty
+/// produces no diff). And `.onKeyPress(.delete)` only fires for
+/// hardware keyboards on iOS — the soft keyboard's backspace isn't
+/// routed through key-press events.
+///
+/// The workaround: keep this invisible character in the underlying
+/// `@State` text any time the field would otherwise be empty. When
+/// the user hits backspace on a visually-empty field they actually
+/// delete the sentinel, the binding goes from `"\u{200B}"` → `""`,
+/// `onChange` fires, and we know to call `onEmptyBackspace`. We then
+/// re-insert the sentinel so the next backspace can be caught too.
+///
+/// The parent's `Binding<String>` never sees this character — we
+/// strip it before writing back, and add it back when reading in.
+private let dsDOBSentinel = "\u{200B}"
+
 // MARK: - Glass TextField
 
 public struct DSGlassTextField: View {
@@ -79,155 +101,6 @@ public struct DSGlassTextField: View {
     }
 }
 
-// MARK: - Backspace-Aware UITextField (private)
-
-#if canImport(UIKit)
-/// A `UIViewRepresentable`-wrapped `UITextField` subclass that exposes
-/// the "backspace pressed while text was already empty" event — a
-/// signal SwiftUI's `TextField` doesn't deliver natively (an
-/// empty-on-empty backspace produces no `onChange`).
-///
-/// Used by `DSDOBField` so the caller can move focus to the previous
-/// segment when the user backspaces past the leftmost digit.
-struct DSBackspaceAwareTextField: UIViewRepresentable {
-    @Binding var text: String
-    let placeholder: String
-    let font: UIFont
-    let textColor: UIColor
-    let placeholderColor: UIColor
-    let keyboardType: UIKeyboardType
-    let onEmptyBackspace: () -> Void
-    /// Forwarded so the wrapper can resign / take first responder when
-    /// the SwiftUI `@FocusState` flips. This is a one-way mirror —
-    /// SwiftUI is still the source of truth.
-    let isFocused: Bool
-    let onFocusChange: (Bool) -> Void
-
-    func makeUIView(context: Context) -> _BackspaceUITextField {
-        let tf = _BackspaceUITextField()
-        tf.delegate = context.coordinator
-        tf.onEmptyBackspace = { [weak coordinator = context.coordinator] in
-            coordinator?.handleEmptyBackspace()
-        }
-        tf.font = font
-        tf.textColor = textColor
-        tf.keyboardType = keyboardType
-        tf.borderStyle = .none
-        tf.backgroundColor = .clear
-        tf.attributedPlaceholder = NSAttributedString(
-            string: placeholder,
-            attributes: [.foregroundColor: placeholderColor, .font: font]
-        )
-        // Disable the system "smart" features that interfere with a
-        // numeric segment field.
-        tf.autocorrectionType = .no
-        tf.autocapitalizationType = .none
-        tf.spellCheckingType = .no
-        tf.smartDashesType = .no
-        tf.smartQuotesType = .no
-        tf.smartInsertDeleteType = .no
-        tf.addTarget(
-            context.coordinator,
-            action: #selector(Coordinator.editingChanged(_:)),
-            for: .editingChanged
-        )
-        return tf
-    }
-
-    func updateUIView(_ uiView: _BackspaceUITextField, context: Context) {
-        // Keep the Coordinator's `parent` reference fresh so the bindings
-        // and closures it forwards to (text, onEmptyBackspace,
-        // onFocusChange) always point at *this* render's values, not the
-        // first one captured in `makeCoordinator`. Without this, every
-        // editingChanged write goes through stale closures and SwiftUI
-        // never sees the updated text in the right binding identity,
-        // which is what was tearing the responder down.
-        context.coordinator.parent = self
-
-        // Keep the placeholder colour fresh — SwiftUI may rebuild this
-        // representable across colour-scheme changes.
-        if uiView.attributedPlaceholder?.string != placeholder {
-            uiView.attributedPlaceholder = NSAttributedString(
-                string: placeholder,
-                attributes: [.foregroundColor: placeholderColor, .font: font]
-            )
-        }
-        if uiView.text != text {
-            uiView.text = text
-        }
-
-        // Mirror SwiftUI's @FocusState onto UIKit, but ONLY on a true
-        // edge transition of the SwiftUI focus binding — not "every
-        // updateUIView where SwiftUI happens to be out of phase with
-        // UIKit." The previous implementation called become/resign on
-        // every render where the two disagreed, async-dispatched, which
-        // raced with `textFieldDidBeginEditing` callbacks and caused the
-        // field to lose focus after each keystroke.
-        let coord = context.coordinator
-        if isFocused != coord.lastIsFocused {
-            if isFocused, !uiView.isFirstResponder {
-                uiView.becomeFirstResponder()
-            } else if !isFocused, uiView.isFirstResponder {
-                uiView.resignFirstResponder()
-            }
-            coord.lastIsFocused = isFocused
-        }
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator(self) }
-
-    final class Coordinator: NSObject, UITextFieldDelegate {
-        var parent: DSBackspaceAwareTextField
-        /// Last SwiftUI-side focus value we observed. Used by
-        /// `updateUIView` to detect a genuine focus edge instead of
-        /// firing become/resign on every text-driven re-render.
-        var lastIsFocused: Bool
-
-        init(_ parent: DSBackspaceAwareTextField) {
-            self.parent = parent
-            self.lastIsFocused = parent.isFocused
-        }
-
-        @objc func editingChanged(_ sender: UITextField) {
-            parent.text = sender.text ?? ""
-        }
-
-        func handleEmptyBackspace() {
-            parent.onEmptyBackspace()
-        }
-
-        func textFieldDidBeginEditing(_ textField: UITextField) {
-            // UIKit just made this field first responder. Record the
-            // truth so the next updateUIView sees focused→focused (not
-            // a phantom edge) and doesn't try to "fix" anything.
-            lastIsFocused = true
-            parent.onFocusChange(true)
-        }
-
-        func textFieldDidEndEditing(_ textField: UITextField) {
-            lastIsFocused = false
-            parent.onFocusChange(false)
-        }
-    }
-}
-
-/// Concrete `UITextField` subclass that overrides `deleteBackward()` so
-/// we can detect a backspace press on an already-empty field — the
-/// only reliable way to receive that signal on iOS.
-final class _BackspaceUITextField: UITextField {
-    /// Fired *before* `super.deleteBackward()` runs, only when the
-    /// current text was empty. Lets SwiftUI move focus to the previous
-    /// segment without losing the next character the user types.
-    var onEmptyBackspace: (() -> Void)?
-
-    override func deleteBackward() {
-        let wasEmpty = (text ?? "").isEmpty
-        super.deleteBackward()
-        if wasEmpty { onEmptyBackspace?() }
-    }
-}
-#endif
-
 // MARK: - DOB TextField
 
 public struct DSDOBField: View {
@@ -254,6 +127,14 @@ public struct DSDOBField: View {
     private let onEmptyBackspace: (() -> Void)?
     private var externalFocus: FocusState<Field?>.Binding?
     @FocusState private var localFocus: Bool
+
+    /// Internal text the SwiftUI `TextField` actually edits. Mirrors
+    /// the parent's `text` binding *plus* a zero-width-space sentinel
+    /// any time the visible value is empty. The sentinel lets us
+    /// detect an empty-field backspace from the iOS soft keyboard
+    /// (which doesn't fire `.onKeyPress(.delete)`). We strip it before
+    /// writing back to the parent, so callers never observe it.
+    @State private var internalText: String = ""
 
     /// Tracks the last `isError` we saw so we can detect false→true
     /// transitions and fire the shake + haptic exactly **once per onset**
@@ -366,63 +247,136 @@ public struct DSDOBField: View {
 
     @ViewBuilder
     private var textField: some View {
-        #if canImport(UIKit)
-        let placeholder = placeholderString
-        DSBackspaceAwareTextField(
-            text: $text,
-            placeholder: placeholder,
-            font: .systemFont(ofSize: 24, weight: .heavy),
-            textColor: UIColor(DSColors.textPrimary),
-            placeholderColor: UIColor(DSColors.textPlaceholder),
-            keyboardType: .numberPad,
-            onEmptyBackspace: { onEmptyBackspace?() },
-            isFocused: isCurrentlyFocused,
-            onFocusChange: { focused in
-                if focused {
-                    if let externalFocus {
-                        if externalFocus.wrappedValue != field {
-                            externalFocus.wrappedValue = field
-                        }
-                    } else {
-                        localFocus = true
-                    }
-                }
-            }
-        )
-        .onChange(of: text) { _, newValue in
-            sanitize(newValue)
+        if let externalFocus {
+            rawTextField
+                .focused(externalFocus, equals: field)
+        } else {
+            rawTextField
+                .focused($localFocus)
         }
-        #else
-        // macOS preview fallback — no UIKit available.
-        TextField("", text: $text, prompt: Text(placeholderString))
+    }
+
+    @ViewBuilder
+    private var rawTextField: some View {
+        // We can't use SwiftUI's `prompt:` parameter here because the
+        // sentinel keeps `internalText` non-empty whenever the field
+        // would otherwise be empty — and SwiftUI only renders the
+        // prompt when the binding is empty. So we layer a manual
+        // placeholder overlay aligned to the field's leading edge,
+        // and toggle it on `displayedText(internalText).isEmpty`.
+        let baseField = TextField("", text: $internalText)
             .font(.system(size: 24, weight: .heavy))
             .foregroundStyle(DSColors.textPrimary)
-            .onChange(of: text) { _, newValue in
-                sanitize(newValue)
+            .autocorrectionDisabled(true)
+            .textInputAutocapitalization(.never)
+            .overlay(alignment: .leading) {
+                if displayedText(internalText).isEmpty {
+                    Text(placeholderString)
+                        .font(.system(size: 24, weight: .heavy))
+                        .foregroundStyle(DSColors.textPlaceholder)
+                        .allowsHitTesting(false)
+                }
             }
+            // Hardware-keyboard backspace path. On iOS this only fires
+            // when an external keyboard is attached — soft keyboards
+            // don't route through key-press events, hence the sentinel
+            // fallback in `applyInternalChange` below.
+            .onKeyPress(.delete) {
+                if displayedText(internalText).isEmpty {
+                    onEmptyBackspace?()
+                    return .handled
+                }
+                return .ignored
+            }
+            .onAppear {
+                // Seed the internal buffer from the parent on first
+                // mount so a pre-populated `text` shows up correctly,
+                // then stamp the sentinel if the visible value is
+                // empty so the soft-keyboard backspace path is armed.
+                internalText = primeInternalText(from: text)
+            }
+            .onChange(of: text) { _, newExternal in
+                // The parent overwrote `text` (e.g. clearing the form).
+                // Resync our internal buffer, preserving the sentinel
+                // when the new value is empty.
+                let primed = primeInternalText(from: newExternal)
+                if primed != internalText {
+                    internalText = primed
+                }
+            }
+            .onChange(of: internalText) { oldInternal, newInternal in
+                applyInternalChange(old: oldInternal, new: newInternal)
+            }
+
+        #if canImport(UIKit)
+        baseField.keyboardType(.numberPad)
+        #else
+        baseField
         #endif
     }
 
-    /// Whether *this* segment is the currently focused one, derived
-    /// from whichever focus binding is active. Drives
-    /// `becomeFirstResponder` / `resignFirstResponder` on the wrapped
-    /// `UITextField`.
-    private var isCurrentlyFocused: Bool {
-        if let externalFocus {
-            return externalFocus.wrappedValue == field
-        } else {
-            return localFocus
-        }
+    /// Strips the zero-width-space sentinel from a buffer so the rest
+    /// of the view (and the parent binding) only sees real digits.
+    private func displayedText(_ raw: String) -> String {
+        raw.replacingOccurrences(of: dsDOBSentinel, with: "")
     }
 
-    /// Strips non-digits and clamps to the field's digit limit.
-    /// Bound to `text` so the parent's binding always reflects the cleaned value.
-    private func sanitize(_ newValue: String) {
-        let digitsOnly = newValue.filter(\.isNumber)
+    /// Builds the internal buffer from an external `String` value.
+    /// Empty external value → just the sentinel (so the next backspace
+    /// is detectable). Non-empty → the digits unchanged.
+    private func primeInternalText(from external: String) -> String {
+        external.isEmpty ? dsDOBSentinel : external
+    }
+
+    /// Reconciles a `TextField` edit:
+    /// - If the user deleted the sentinel (visible was already empty
+    ///   and remains empty), fire `onEmptyBackspace` and re-prime the
+    ///   sentinel so the next backspace is also catchable.
+    /// - Otherwise, sanitize the visible portion (digits only, clamped
+    ///   to `field.digitLimit`) and write the cleaned value back to
+    ///   the parent binding. Re-stamp the sentinel if the field ends
+    ///   up empty after sanitization.
+    private func applyInternalChange(old: String, new: String) {
+        let oldVisible = displayedText(old)
+        let newVisible = displayedText(new)
+
+        // Soft-keyboard empty-backspace path: the user deleted the
+        // sentinel. New buffer is fully empty (no sentinel, no
+        // digits), old visible was already empty. We treat this as
+        // "backspace on empty field" and re-stamp the sentinel.
+        if new.isEmpty, oldVisible.isEmpty {
+            onEmptyBackspace?()
+            // Re-prime so subsequent backspaces are still detected.
+            // Using async write avoids feeding back into this
+            // onChange synchronously.
+            DispatchQueue.main.async {
+                if internalText.isEmpty {
+                    internalText = dsDOBSentinel
+                }
+            }
+            // Make sure the parent's binding stays empty.
+            if !text.isEmpty { text = "" }
+            return
+        }
+
+        // Normal edit: clean digits, clamp to limit.
+        let digitsOnly = newVisible.filter(\.isNumber)
         let limited = String(digitsOnly.prefix(field.digitLimit))
-        if limited != newValue {
-            // Avoid an infinite onChange loop — only write back when different.
+
+        // Write cleaned value back to the parent.
+        if limited != text {
             text = limited
+        }
+
+        // Reconcile the internal buffer. Empty visible → keep the
+        // sentinel armed. Non-empty → strip any sentinel.
+        let desired = limited.isEmpty ? dsDOBSentinel : limited
+        if desired != new {
+            DispatchQueue.main.async {
+                if internalText != desired {
+                    internalText = desired
+                }
+            }
         }
     }
 
