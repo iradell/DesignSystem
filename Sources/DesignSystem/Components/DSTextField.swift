@@ -1,4 +1,7 @@
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 // MARK: - Glass TextField
 
@@ -76,6 +79,126 @@ public struct DSGlassTextField: View {
     }
 }
 
+// MARK: - Backspace-Aware UITextField (private)
+
+#if canImport(UIKit)
+/// A `UIViewRepresentable`-wrapped `UITextField` subclass that exposes
+/// the "backspace pressed while text was already empty" event — a
+/// signal SwiftUI's `TextField` doesn't deliver natively (an
+/// empty-on-empty backspace produces no `onChange`).
+///
+/// Used by `DSDOBField` so the caller can move focus to the previous
+/// segment when the user backspaces past the leftmost digit.
+struct DSBackspaceAwareTextField: UIViewRepresentable {
+    @Binding var text: String
+    let placeholder: String
+    let font: UIFont
+    let textColor: UIColor
+    let placeholderColor: UIColor
+    let keyboardType: UIKeyboardType
+    let onEmptyBackspace: () -> Void
+    /// Forwarded so the wrapper can resign / take first responder when
+    /// the SwiftUI `@FocusState` flips. This is a one-way mirror —
+    /// SwiftUI is still the source of truth.
+    let isFocused: Bool
+    let onFocusChange: (Bool) -> Void
+
+    func makeUIView(context: Context) -> _BackspaceUITextField {
+        let tf = _BackspaceUITextField()
+        tf.delegate = context.coordinator
+        tf.onEmptyBackspace = { [weak coordinator = context.coordinator] in
+            coordinator?.handleEmptyBackspace()
+        }
+        tf.font = font
+        tf.textColor = textColor
+        tf.keyboardType = keyboardType
+        tf.borderStyle = .none
+        tf.backgroundColor = .clear
+        tf.attributedPlaceholder = NSAttributedString(
+            string: placeholder,
+            attributes: [.foregroundColor: placeholderColor, .font: font]
+        )
+        // Disable the system "smart" features that interfere with a
+        // numeric segment field.
+        tf.autocorrectionType = .no
+        tf.autocapitalizationType = .none
+        tf.spellCheckingType = .no
+        tf.smartDashesType = .no
+        tf.smartQuotesType = .no
+        tf.smartInsertDeleteType = .no
+        tf.addTarget(
+            context.coordinator,
+            action: #selector(Coordinator.editingChanged(_:)),
+            for: .editingChanged
+        )
+        return tf
+    }
+
+    func updateUIView(_ uiView: _BackspaceUITextField, context: Context) {
+        // Keep the placeholder colour fresh — SwiftUI may rebuild this
+        // representable across colour-scheme changes.
+        if uiView.attributedPlaceholder?.string != placeholder {
+            uiView.attributedPlaceholder = NSAttributedString(
+                string: placeholder,
+                attributes: [.foregroundColor: placeholderColor, .font: font]
+            )
+        }
+        if uiView.text != text {
+            uiView.text = text
+        }
+        // Mirror SwiftUI's @FocusState onto UIKit. We only act on
+        // changes to avoid ping-ponging with `textFieldDidBeginEditing`.
+        if isFocused, !uiView.isFirstResponder {
+            DispatchQueue.main.async { uiView.becomeFirstResponder() }
+        } else if !isFocused, uiView.isFirstResponder {
+            DispatchQueue.main.async { uiView.resignFirstResponder() }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    final class Coordinator: NSObject, UITextFieldDelegate {
+        var parent: DSBackspaceAwareTextField
+
+        init(_ parent: DSBackspaceAwareTextField) {
+            self.parent = parent
+        }
+
+        @objc func editingChanged(_ sender: UITextField) {
+            parent.text = sender.text ?? ""
+        }
+
+        func handleEmptyBackspace() {
+            parent.onEmptyBackspace()
+        }
+
+        func textFieldDidBeginEditing(_ textField: UITextField) {
+            parent.onFocusChange(true)
+        }
+
+        func textFieldDidEndEditing(_ textField: UITextField) {
+            parent.onFocusChange(false)
+        }
+    }
+}
+
+/// Concrete `UITextField` subclass that overrides `deleteBackward()` so
+/// we can detect a backspace press on an already-empty field — the
+/// only reliable way to receive that signal on iOS.
+final class _BackspaceUITextField: UITextField {
+    /// Fired *before* `super.deleteBackward()` runs, only when the
+    /// current text was empty. Lets SwiftUI move focus to the previous
+    /// segment without losing the next character the user types.
+    var onEmptyBackspace: (() -> Void)?
+
+    override func deleteBackward() {
+        let wasEmpty = (text ?? "").isEmpty
+        super.deleteBackward()
+        if wasEmpty { onEmptyBackspace?() }
+    }
+}
+#endif
+
 // MARK: - DOB TextField
 
 public struct DSDOBField: View {
@@ -96,27 +219,47 @@ public struct DSDOBField: View {
     private let field: Field
     @Binding private var text: String
     private let isError: Bool
+    /// Optional: invoked when the user presses backspace on an
+    /// already-empty field. The caller (typically `DSDOBInputGroup`)
+    /// uses this to move focus to the previous segment.
+    private let onEmptyBackspace: (() -> Void)?
     private var externalFocus: FocusState<Field?>.Binding?
     @FocusState private var localFocus: Bool
 
-    public init(field: Field, text: Binding<String>, isError: Bool = false) {
-        self.field = field
-        self._text = text
-        self.isError = isError
-        self.externalFocus = nil
-    }
+    /// Tracks the last `isError` we saw so we can detect false→true
+    /// transitions and fire the shake + haptic exactly **once per onset**
+    /// (not continuously while the field stays invalid).
+    @State private var lastIsError: Bool = false
+    /// Bumped on every false→true error transition. `dsShake` watches
+    /// the trigger value, replaying the shake keyframes each time.
+    @State private var shakeTrigger: Int = 0
 
-    /// Shared-focus initializer used by `DSDOBInputGroup` to coordinate
-    /// focus across the three fields (auto-advance behaviour).
     public init(
         field: Field,
         text: Binding<String>,
-        focus: FocusState<Field?>.Binding,
-        isError: Bool = false
+        isError: Bool = false,
+        onEmptyBackspace: (() -> Void)? = nil
     ) {
         self.field = field
         self._text = text
         self.isError = isError
+        self.onEmptyBackspace = onEmptyBackspace
+        self.externalFocus = nil
+    }
+
+    /// Shared-focus initializer used by `DSDOBInputGroup` to coordinate
+    /// focus across the three fields (auto-advance + backspace-back).
+    public init(
+        field: Field,
+        text: Binding<String>,
+        focus: FocusState<Field?>.Binding,
+        isError: Bool = false,
+        onEmptyBackspace: (() -> Void)? = nil
+    ) {
+        self.field = field
+        self._text = text
+        self.isError = isError
+        self.onEmptyBackspace = onEmptyBackspace
         self.externalFocus = focus
     }
 
@@ -131,23 +274,30 @@ public struct DSDOBField: View {
         }
         .padding(DSSpacing.lg)
         .frame(maxWidth: .infinity)
+        // Layered background: the glass fill stays underneath in every
+        // state, and the destructive tint sits on top *only* when
+        // `isError` is true. Using a solid (non-animated) overlay rather
+        // than a coloured stroke matches the "fill the field red"
+        // requirement and keeps the visual state change instant.
         .background(.ultraThinMaterial)
+        .background(
+            // Destructive fill — appears the moment `isError` flips
+            // true, no transition. Sits behind the content but on top
+            // of the material, picking up the rounded clip below.
+            isError
+                ? DSColors.destructive.opacity(0.18)
+                : Color.clear
+        )
         .clipShape(RoundedRectangle(cornerRadius: DSRadius.xl))
         .overlay(
-            // Resting glass border — always present so the field never
-            // looks bare while the red stroke is hidden.
+            // Border swap (also non-animated): a solid red stroke when
+            // erroring, the resting glass border otherwise. Replaces the
+            // previous trim-from-0-to-1 animated stroke.
             RoundedRectangle(cornerRadius: DSRadius.xl)
-                .stroke(DSColors.glassBorderStrong, lineWidth: 1)
-        )
-        .overlay(
-            // Animated red stroke. We trim the rounded rect from 0→1 when
-            // `isError` flips on, so the destructive border literally
-            // *draws* around the field. When `isError` flips back off the
-            // trim retreats from 1→0 and the stroke unwinds.
-            RoundedRectangle(cornerRadius: DSRadius.xl)
-                .trim(from: 0, to: isError ? 1 : 0)
-                .stroke(DSColors.destructive, lineWidth: 2)
-                .animation(.easeInOut(duration: 0.45), value: isError)
+                .stroke(
+                    isError ? DSColors.destructive : DSColors.glassBorderStrong,
+                    lineWidth: isError ? 1.5 : 1
+                )
         )
         .shadow(color: .black.opacity(0.05), radius: 10, y: 4)
         .contentShape(RoundedRectangle(cornerRadius: DSRadius.xl))
@@ -158,28 +308,81 @@ public struct DSDOBField: View {
                 localFocus = true
             }
         }
+        // Auto-shake + auto-haptic on every false→true error onset.
+        // We track the previous value in `lastIsError` so we only fire
+        // on the rising edge — staying in error doesn't keep replaying
+        // the shake, and clearing the error doesn't shake either.
+        .dsShake(trigger: shakeTrigger)
+        .onChange(of: isError) { _, nowError in
+            guard nowError, !lastIsError else {
+                lastIsError = nowError
+                return
+            }
+            lastIsError = nowError
+            #if canImport(UIKit)
+            // Honour the system's reduce-motion preference for the
+            // shake. The haptic plays regardless — iOS routes haptics
+            // through its own accessibility settings, so users who
+            // disable haptics globally still won't feel it.
+            let reduceMotion = UIAccessibility.isReduceMotionEnabled
+            if !reduceMotion {
+                shakeTrigger &+= 1
+            }
+            #else
+            shakeTrigger &+= 1
+            #endif
+            DSHaptics.error()
+        }
     }
 
     @ViewBuilder
     private var textField: some View {
+        #if canImport(UIKit)
+        let placeholder = placeholderString
+        DSBackspaceAwareTextField(
+            text: $text,
+            placeholder: placeholder,
+            font: .systemFont(ofSize: 24, weight: .heavy),
+            textColor: UIColor(DSColors.textPrimary),
+            placeholderColor: UIColor(DSColors.textPlaceholder),
+            keyboardType: .numberPad,
+            onEmptyBackspace: { onEmptyBackspace?() },
+            isFocused: isCurrentlyFocused,
+            onFocusChange: { focused in
+                if focused {
+                    if let externalFocus {
+                        if externalFocus.wrappedValue != field {
+                            externalFocus.wrappedValue = field
+                        }
+                    } else {
+                        localFocus = true
+                    }
+                }
+            }
+        )
+        .onChange(of: text) { _, newValue in
+            sanitize(newValue)
+        }
+        #else
+        // macOS preview fallback — no UIKit available.
+        TextField("", text: $text, prompt: Text(placeholderString))
+            .font(.system(size: 24, weight: .heavy))
+            .foregroundStyle(DSColors.textPrimary)
+            .onChange(of: text) { _, newValue in
+                sanitize(newValue)
+            }
+        #endif
+    }
+
+    /// Whether *this* segment is the currently focused one, derived
+    /// from whichever focus binding is active. Drives
+    /// `becomeFirstResponder` / `resignFirstResponder` on the wrapped
+    /// `UITextField`.
+    private var isCurrentlyFocused: Bool {
         if let externalFocus {
-            TextField("", text: $text, prompt: promptText)
-                .font(.system(size: 24, weight: .heavy))
-                .foregroundStyle(DSColors.textPrimary)
-                .keyboardType(.numberPad)
-                .focused(externalFocus, equals: field)
-                .onChange(of: text) { _, newValue in
-                    sanitize(newValue)
-                }
+            return externalFocus.wrappedValue == field
         } else {
-            TextField("", text: $text, prompt: promptText)
-                .font(.system(size: 24, weight: .heavy))
-                .foregroundStyle(DSColors.textPrimary)
-                .keyboardType(.numberPad)
-                .focused($localFocus)
-                .onChange(of: text) { _, newValue in
-                    sanitize(newValue)
-                }
+            return localFocus
         }
     }
 
@@ -194,15 +397,12 @@ public struct DSDOBField: View {
         }
     }
 
-    private var promptText: Text {
-        let placeholder: String = switch field {
-        case .day: "01"
-        case .month: "01"
-        case .year: "1998"
+    private var placeholderString: String {
+        switch field {
+        case .day: return "01"
+        case .month: return "01"
+        case .year: return "1998"
         }
-        return Text(placeholder)
-            .font(.system(size: 24, weight: .heavy))
-            .foregroundStyle(DSColors.textPlaceholder)
     }
 }
 
@@ -213,7 +413,7 @@ public struct DSDOBInputGroup: View {
     @Binding private var month: String
     @Binding private var year: String
     /// Per-field error state. Each `DSDOBField` only renders the destructive
-    /// stroke when its own `Field` value is in this set. Use an empty set
+    /// fill when its own `Field` value is in this set. Use an empty set
     /// for "no errors", `[.month]` for "month only", etc. This mirrors the
     /// `Set<…>` selection pattern used by `DSChipGroup` /
     /// `DSInterestCategory`, keeping the partial-state convention
@@ -222,11 +422,12 @@ public struct DSDOBInputGroup: View {
 
     /// Internally-coordinated focus across the three fields.
     /// Drives auto-advance: typing the digit limit in `day` jumps focus to
-    /// `month`; the limit in `month` jumps focus to `year`.
+    /// `month`; the limit in `month` jumps focus to `year`. Also drives
+    /// the new backspace-on-empty → previous-field behaviour.
     @FocusState private var focusedField: DSDOBField.Field?
 
     /// Designated initializer — pass the set of fields that should render
-    /// their error stroke. Pass `[]` for the all-valid state.
+    /// their error fill. Pass `[]` for the all-valid state.
     public init(
         day: Binding<String>,
         month: Binding<String>,
@@ -259,9 +460,29 @@ public struct DSDOBInputGroup: View {
 
     public var body: some View {
         HStack(spacing: DSSpacing.sm) {
-            DSDOBField(field: .day, text: $day, focus: $focusedField, isError: errorFields.contains(.day))
-            DSDOBField(field: .month, text: $month, focus: $focusedField, isError: errorFields.contains(.month))
-            DSDOBField(field: .year, text: $year, focus: $focusedField, isError: errorFields.contains(.year))
+            DSDOBField(
+                field: .day,
+                text: $day,
+                focus: $focusedField,
+                isError: errorFields.contains(.day),
+                // Day is the leftmost cell — backspacing past it is a
+                // no-op (no previous field to jump to).
+                onEmptyBackspace: nil
+            )
+            DSDOBField(
+                field: .month,
+                text: $month,
+                focus: $focusedField,
+                isError: errorFields.contains(.month),
+                onEmptyBackspace: { focusedField = .day }
+            )
+            DSDOBField(
+                field: .year,
+                text: $year,
+                focus: $focusedField,
+                isError: errorFields.contains(.year),
+                onEmptyBackspace: { focusedField = .month }
+            )
                 .frame(maxWidth: .infinity)
         }
         .onChange(of: day) { _, newValue in
@@ -304,6 +525,13 @@ public struct DSDOBInputGroup: View {
             month: .constant("13"),
             year: .constant("1998"),
             errorFields: [.month]
+        )
+
+        DSDOBInputGroup(
+            day: .constant("32"),
+            month: .constant("13"),
+            year: .constant("2099"),
+            errorFields: [.day, .month, .year]
         )
     }
     .padding(32)
