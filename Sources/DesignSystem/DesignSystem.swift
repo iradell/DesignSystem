@@ -63,3 +63,4 @@
 //   .dsBackground(_:)                     - Apply onboarding or form gradient background
 //   .dsNavigationBar(title:onBack:trailing:) - Configure system nav bar with DS chrome
 //   .dsScrollAwareNavigationBackground(…) - Fade header background 0→1 as user scrolls
+//   .dsShake(trigger:amplitude:duration:) - Horizontal shake on validation failure

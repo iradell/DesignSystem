@@ -95,12 +95,14 @@ public struct DSDOBField: View {
 
     private let field: Field
     @Binding private var text: String
+    private let isError: Bool
     private var externalFocus: FocusState<Field?>.Binding?
     @FocusState private var localFocus: Bool
 
-    public init(field: Field, text: Binding<String>) {
+    public init(field: Field, text: Binding<String>, isError: Bool = false) {
         self.field = field
         self._text = text
+        self.isError = isError
         self.externalFocus = nil
     }
 
@@ -109,10 +111,12 @@ public struct DSDOBField: View {
     public init(
         field: Field,
         text: Binding<String>,
-        focus: FocusState<Field?>.Binding
+        focus: FocusState<Field?>.Binding,
+        isError: Bool = false
     ) {
         self.field = field
         self._text = text
+        self.isError = isError
         self.externalFocus = focus
     }
 
@@ -130,8 +134,20 @@ public struct DSDOBField: View {
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: DSRadius.xl))
         .overlay(
+            // Resting glass border — always present so the field never
+            // looks bare while the red stroke is hidden.
             RoundedRectangle(cornerRadius: DSRadius.xl)
                 .stroke(DSColors.glassBorderStrong, lineWidth: 1)
+        )
+        .overlay(
+            // Animated red stroke. We trim the rounded rect from 0→1 when
+            // `isError` flips on, so the destructive border literally
+            // *draws* around the field. When `isError` flips back off the
+            // trim retreats from 1→0 and the stroke unwinds.
+            RoundedRectangle(cornerRadius: DSRadius.xl)
+                .trim(from: 0, to: isError ? 1 : 0)
+                .stroke(DSColors.destructive, lineWidth: 2)
+                .animation(.easeInOut(duration: 0.45), value: isError)
         )
         .shadow(color: .black.opacity(0.05), radius: 10, y: 4)
         .contentShape(RoundedRectangle(cornerRadius: DSRadius.xl))
@@ -196,23 +212,30 @@ public struct DSDOBInputGroup: View {
     @Binding private var day: String
     @Binding private var month: String
     @Binding private var year: String
+    private let isError: Bool
 
     /// Internally-coordinated focus across the three fields.
     /// Drives auto-advance: typing the digit limit in `day` jumps focus to
     /// `month`; the limit in `month` jumps focus to `year`.
     @FocusState private var focusedField: DSDOBField.Field?
 
-    public init(day: Binding<String>, month: Binding<String>, year: Binding<String>) {
+    public init(
+        day: Binding<String>,
+        month: Binding<String>,
+        year: Binding<String>,
+        isError: Bool = false
+    ) {
         self._day = day
         self._month = month
         self._year = year
+        self.isError = isError
     }
 
     public var body: some View {
         HStack(spacing: DSSpacing.sm) {
-            DSDOBField(field: .day, text: $day, focus: $focusedField)
-            DSDOBField(field: .month, text: $month, focus: $focusedField)
-            DSDOBField(field: .year, text: $year, focus: $focusedField)
+            DSDOBField(field: .day, text: $day, focus: $focusedField, isError: isError)
+            DSDOBField(field: .month, text: $month, focus: $focusedField, isError: isError)
+            DSDOBField(field: .year, text: $year, focus: $focusedField, isError: isError)
                 .frame(maxWidth: .infinity)
         }
         .onChange(of: day) { _, newValue in
