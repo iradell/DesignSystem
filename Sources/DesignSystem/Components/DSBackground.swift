@@ -5,7 +5,6 @@ import SwiftUI
 public enum DSBackgroundStyle {
     case onboarding
     case form
-    case animatedMesh
 }
 
 // MARK: - Gradient Background
@@ -23,8 +22,6 @@ public struct DSGradientBackground: View {
             onboardingBackground
         case .form:
             formBackground
-        case .animatedMesh:
-            DSAnimatedMeshBackground()
         }
     }
 
@@ -71,61 +68,6 @@ public struct DSGradientBackground: View {
     }
 }
 
-// MARK: - Animated Mesh Background
-
-public struct DSAnimatedMeshBackground: View {
-    // Pale tokens — keep corners light so cards/text still read
-    private let bgLight = Color(hex: 0xE8E9F4)
-    private let palePink = Color(hex: 0xE0DAFF)
-    private let paleBlue = Color(hex: 0xC7D0FF)
-
-    // Saturated accents — drive the visible motion in the interior
-    private let accentIndigo = Color(hex: 0x6366F1)
-    private let accentPurple = Color(hex: 0x7C3AED)
-    private let accentDeep   = Color(hex: 0x4F46E5)
-
-    public init() {}
-
-    public var body: some View {
-        TimelineView(.animation) { context in
-            let t = context.date.timeIntervalSinceReferenceDate
-            let p = phase(t)
-
-            // sin everywhere → all moving points start exactly at 0.5 (no curvature on first frame).
-            // Different multipliers per point so they desync and the motion reads as fluid, not pulsing.
-            MeshGradient(
-                width: 3,
-                height: 3,
-                points: [
-                    [0.0, 0.0],
-                    [0.5 + 0.15 * Float(sin(p)),       0.0],
-                    [1.0, 0.0],
-
-                    [0.0, 0.5 + 0.15 * Float(sin(p * 0.9))],
-                    [0.5 + 0.18 * Float(sin(p * 1.1)), 0.5 + 0.18 * Float(sin(p * 1.3))],
-                    [1.0, 0.5 + 0.15 * Float(sin(p * 0.8))],
-
-                    [0.0, 1.0],
-                    [0.5 + 0.15 * Float(sin(p * 1.2)), 1.0],
-                    [1.0, 1.0]
-                ],
-                colors: [
-                    bgLight,        accentIndigo,  paleBlue,
-                    accentPurple,   accentDeep,    accentIndigo,
-                    paleBlue,       accentPurple,  palePink
-                ],
-                smoothsColors: true
-            )
-            .ignoresSafeArea()
-        }
-    }
-
-    private func phase(_ t: TimeInterval) -> Double {
-        // ~14s loop — calm, ambient motion.
-        (t.truncatingRemainder(dividingBy: 14)) / 14 * .pi * 2
-    }
-}
-
 // MARK: - Background Modifier
 
 public struct DSBackgroundModifier: ViewModifier {
@@ -163,9 +105,3 @@ extension View {
         .dsBackground(.form)
 }
 
-#Preview("Animated Mesh Background") {
-    Text("Animated Mesh")
-        .font(DSTypography.displayMedium)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .dsBackground(.animatedMesh)
-}
