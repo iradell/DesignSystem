@@ -6,7 +6,7 @@ let package = Package(
     name: "DesignSystem",
     platforms: [
         .iOS(.v18),
-        .macOS(.v14)
+        .macOS(.v15)
     ],
     products: [
         .library(
