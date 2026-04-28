@@ -90,37 +90,29 @@ public struct DSAnimatedMeshBackground: View {
         TimelineView(.animation) { context in
             let t = context.date.timeIntervalSinceReferenceDate
             let p = phase(t)
-            let cyc = colorCycle(t)
 
-            // Cycle the three saturated accents through the four mid-edge slots
-            // and the center, so the bloom visibly travels across the screen.
-            let mid: [Color] = [accentIndigo, accentPurple, accentDeep]
-            let topMid    = mid[(cyc + 0) % 3]
-            let leftMid   = mid[(cyc + 1) % 3]
-            let rightMid  = mid[(cyc + 2) % 3]
-            let bottomMid = mid[(cyc + 1) % 3]
-            let center    = mid[(cyc + 2) % 3]
-
+            // sin everywhere → all moving points start exactly at 0.5 (no curvature on first frame).
+            // Different multipliers per point so they desync and the motion reads as fluid, not pulsing.
             MeshGradient(
                 width: 3,
                 height: 3,
                 points: [
                     [0.0, 0.0],
-                    [0.5 + 0.35 * Float(sin(p)),       0.0],
+                    [0.5 + 0.15 * Float(sin(p)),       0.0],
                     [1.0, 0.0],
 
-                    [0.0, 0.5 + 0.35 * Float(cos(p * 0.9))],
-                    [0.5 + 0.40 * Float(sin(p * 1.1)), 0.5 + 0.40 * Float(cos(p * 1.3))],
-                    [1.0, 0.5 + 0.35 * Float(sin(p * 0.8))],
+                    [0.0, 0.5 + 0.15 * Float(sin(p * 0.9))],
+                    [0.5 + 0.18 * Float(sin(p * 1.1)), 0.5 + 0.18 * Float(sin(p * 1.3))],
+                    [1.0, 0.5 + 0.15 * Float(sin(p * 0.8))],
 
                     [0.0, 1.0],
-                    [0.5 + 0.35 * Float(cos(p * 1.2)), 1.0],
+                    [0.5 + 0.15 * Float(sin(p * 1.2)), 1.0],
                     [1.0, 1.0]
                 ],
                 colors: [
-                    bgLight,   topMid,    paleBlue,
-                    leftMid,   center,    rightMid,
-                    paleBlue,  bottomMid, palePink
+                    bgLight,        accentIndigo,  paleBlue,
+                    accentPurple,   accentDeep,    accentIndigo,
+                    paleBlue,       accentPurple,  palePink
                 ],
                 smoothsColors: true
             )
@@ -129,13 +121,8 @@ public struct DSAnimatedMeshBackground: View {
     }
 
     private func phase(_ t: TimeInterval) -> Double {
-        // 6s loop on point positions — fast enough that the motion reads on first glance.
-        (t.truncatingRemainder(dividingBy: 6)) / 6 * .pi * 2
-    }
-
-    private func colorCycle(_ t: TimeInterval) -> Int {
-        // Step the saturated accents to a new arrangement every 2s.
-        Int(t / 2) % 3
+        // ~14s loop — calm, ambient motion.
+        (t.truncatingRemainder(dividingBy: 14)) / 14 * .pi * 2
     }
 }
 
