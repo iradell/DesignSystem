@@ -135,6 +135,15 @@ struct DSBackspaceAwareTextField: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: _BackspaceUITextField, context: Context) {
+        // Keep the Coordinator's `parent` reference fresh so the bindings
+        // and closures it forwards to (text, onEmptyBackspace,
+        // onFocusChange) always point at *this* render's values, not the
+        // first one captured in `makeCoordinator`. Without this, every
+        // editingChanged write goes through stale closures and SwiftUI
+        // never sees the updated text in the right binding identity,
+        // which is what was tearing the responder down.
+        context.coordinator.parent = self
+
         // Keep the placeholder colour fresh — SwiftUI may rebuild this
         // representable across colour-scheme changes.
         if uiView.attributedPlaceholder?.string != placeholder {
@@ -146,12 +155,22 @@ struct DSBackspaceAwareTextField: UIViewRepresentable {
         if uiView.text != text {
             uiView.text = text
         }
-        // Mirror SwiftUI's @FocusState onto UIKit. We only act on
-        // changes to avoid ping-ponging with `textFieldDidBeginEditing`.
-        if isFocused, !uiView.isFirstResponder {
-            DispatchQueue.main.async { uiView.becomeFirstResponder() }
-        } else if !isFocused, uiView.isFirstResponder {
-            DispatchQueue.main.async { uiView.resignFirstResponder() }
+
+        // Mirror SwiftUI's @FocusState onto UIKit, but ONLY on a true
+        // edge transition of the SwiftUI focus binding — not "every
+        // updateUIView where SwiftUI happens to be out of phase with
+        // UIKit." The previous implementation called become/resign on
+        // every render where the two disagreed, async-dispatched, which
+        // raced with `textFieldDidBeginEditing` callbacks and caused the
+        // field to lose focus after each keystroke.
+        let coord = context.coordinator
+        if isFocused != coord.lastIsFocused {
+            if isFocused, !uiView.isFirstResponder {
+                uiView.becomeFirstResponder()
+            } else if !isFocused, uiView.isFirstResponder {
+                uiView.resignFirstResponder()
+            }
+            coord.lastIsFocused = isFocused
         }
     }
 
@@ -159,9 +178,14 @@ struct DSBackspaceAwareTextField: UIViewRepresentable {
 
     final class Coordinator: NSObject, UITextFieldDelegate {
         var parent: DSBackspaceAwareTextField
+        /// Last SwiftUI-side focus value we observed. Used by
+        /// `updateUIView` to detect a genuine focus edge instead of
+        /// firing become/resign on every text-driven re-render.
+        var lastIsFocused: Bool
 
         init(_ parent: DSBackspaceAwareTextField) {
             self.parent = parent
+            self.lastIsFocused = parent.isFocused
         }
 
         @objc func editingChanged(_ sender: UITextField) {
@@ -173,10 +197,15 @@ struct DSBackspaceAwareTextField: UIViewRepresentable {
         }
 
         func textFieldDidBeginEditing(_ textField: UITextField) {
+            // UIKit just made this field first responder. Record the
+            // truth so the next updateUIView sees focused→focused (not
+            // a phantom edge) and doesn't try to "fix" anything.
+            lastIsFocused = true
             parent.onFocusChange(true)
         }
 
         func textFieldDidEndEditing(_ textField: UITextField) {
+            lastIsFocused = false
             parent.onFocusChange(false)
         }
     }
