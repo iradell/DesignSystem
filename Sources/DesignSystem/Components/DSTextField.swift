@@ -212,30 +212,56 @@ public struct DSDOBInputGroup: View {
     @Binding private var day: String
     @Binding private var month: String
     @Binding private var year: String
-    private let isError: Bool
+    /// Per-field error state. Each `DSDOBField` only renders the destructive
+    /// stroke when its own `Field` value is in this set. Use an empty set
+    /// for "no errors", `[.month]` for "month only", etc. This mirrors the
+    /// `Set<…>` selection pattern used by `DSChipGroup` /
+    /// `DSInterestCategory`, keeping the partial-state convention
+    /// consistent across the DesignSystem.
+    private let errorFields: Set<DSDOBField.Field>
 
     /// Internally-coordinated focus across the three fields.
     /// Drives auto-advance: typing the digit limit in `day` jumps focus to
     /// `month`; the limit in `month` jumps focus to `year`.
     @FocusState private var focusedField: DSDOBField.Field?
 
+    /// Designated initializer — pass the set of fields that should render
+    /// their error stroke. Pass `[]` for the all-valid state.
     public init(
         day: Binding<String>,
         month: Binding<String>,
         year: Binding<String>,
-        isError: Bool = false
+        errorFields: Set<DSDOBField.Field> = []
     ) {
         self._day = day
         self._month = month
         self._year = year
-        self.isError = isError
+        self.errorFields = errorFields
+    }
+
+    /// Backward-compatible convenience for callers still using a single
+    /// `isError` bool. `true` lights up all three fields (legacy behaviour);
+    /// `false` clears them. Prefer the `errorFields:` initializer for
+    /// per-field error highlighting.
+    public init(
+        day: Binding<String>,
+        month: Binding<String>,
+        year: Binding<String>,
+        isError: Bool
+    ) {
+        self.init(
+            day: day,
+            month: month,
+            year: year,
+            errorFields: isError ? [.day, .month, .year] : []
+        )
     }
 
     public var body: some View {
         HStack(spacing: DSSpacing.sm) {
-            DSDOBField(field: .day, text: $day, focus: $focusedField, isError: isError)
-            DSDOBField(field: .month, text: $month, focus: $focusedField, isError: isError)
-            DSDOBField(field: .year, text: $year, focus: $focusedField, isError: isError)
+            DSDOBField(field: .day, text: $day, focus: $focusedField, isError: errorFields.contains(.day))
+            DSDOBField(field: .month, text: $month, focus: $focusedField, isError: errorFields.contains(.month))
+            DSDOBField(field: .year, text: $year, focus: $focusedField, isError: errorFields.contains(.year))
                 .frame(maxWidth: .infinity)
         }
         .onChange(of: day) { _, newValue in
@@ -266,11 +292,20 @@ public struct DSDOBInputGroup: View {
 }
 
 #Preview("DOB Fields") {
-    DSDOBInputGroup(
-        day: .constant(""),
-        month: .constant(""),
-        year: .constant("")
-    )
+    VStack(spacing: 20) {
+        DSDOBInputGroup(
+            day: .constant(""),
+            month: .constant(""),
+            year: .constant("")
+        )
+
+        DSDOBInputGroup(
+            day: .constant("15"),
+            month: .constant("13"),
+            year: .constant("1998"),
+            errorFields: [.month]
+        )
+    }
     .padding(32)
     .background(Color(hex: 0xF8F9FA))
 }
