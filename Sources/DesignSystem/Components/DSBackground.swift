@@ -74,10 +74,15 @@ public struct DSGradientBackground: View {
 // MARK: - Animated Mesh Background
 
 public struct DSAnimatedMeshBackground: View {
-    private let lavender = Color(hex: 0xE8E9F4)
-    private let indigo = Color(hex: 0xC7D0FF)
-    private let violet = Color(hex: 0xD4CCFE)
-    private let pale = Color(hex: 0xE0DAFF)
+    // Pale tokens — keep corners light so cards/text still read
+    private let bgLight = Color(hex: 0xE8E9F4)
+    private let palePink = Color(hex: 0xE0DAFF)
+    private let paleBlue = Color(hex: 0xC7D0FF)
+
+    // Saturated accents — drive the visible motion in the interior
+    private let accentIndigo = Color(hex: 0x6366F1)
+    private let accentPurple = Color(hex: 0x7C3AED)
+    private let accentDeep   = Color(hex: 0x4F46E5)
 
     public init() {}
 
@@ -85,27 +90,37 @@ public struct DSAnimatedMeshBackground: View {
         TimelineView(.animation) { context in
             let t = context.date.timeIntervalSinceReferenceDate
             let p = phase(t)
+            let cyc = colorCycle(t)
+
+            // Cycle the three saturated accents through the four mid-edge slots
+            // and the center, so the bloom visibly travels across the screen.
+            let mid: [Color] = [accentIndigo, accentPurple, accentDeep]
+            let topMid    = mid[(cyc + 0) % 3]
+            let leftMid   = mid[(cyc + 1) % 3]
+            let rightMid  = mid[(cyc + 2) % 3]
+            let bottomMid = mid[(cyc + 1) % 3]
+            let center    = mid[(cyc + 2) % 3]
 
             MeshGradient(
                 width: 3,
                 height: 3,
                 points: [
                     [0.0, 0.0],
-                    [0.5 + 0.18 * Float(sin(p)),       0.0],
+                    [0.5 + 0.35 * Float(sin(p)),       0.0],
                     [1.0, 0.0],
 
-                    [0.0, 0.5 + 0.18 * Float(cos(p * 0.9))],
-                    [0.5 + 0.22 * Float(sin(p * 1.1)), 0.5 + 0.22 * Float(cos(p * 1.3))],
-                    [1.0, 0.5 + 0.18 * Float(sin(p * 0.8))],
+                    [0.0, 0.5 + 0.35 * Float(cos(p * 0.9))],
+                    [0.5 + 0.40 * Float(sin(p * 1.1)), 0.5 + 0.40 * Float(cos(p * 1.3))],
+                    [1.0, 0.5 + 0.35 * Float(sin(p * 0.8))],
 
                     [0.0, 1.0],
-                    [0.5 + 0.18 * Float(cos(p * 1.2)), 1.0],
+                    [0.5 + 0.35 * Float(cos(p * 1.2)), 1.0],
                     [1.0, 1.0]
                 ],
                 colors: [
-                    lavender, pale,    indigo,
-                    pale,     violet,  indigo,
-                    indigo,   violet,  pale
+                    bgLight,   topMid,    paleBlue,
+                    leftMid,   center,    rightMid,
+                    paleBlue,  bottomMid, palePink
                 ],
                 smoothsColors: true
             )
@@ -114,8 +129,13 @@ public struct DSAnimatedMeshBackground: View {
     }
 
     private func phase(_ t: TimeInterval) -> Double {
-        // ~12s loop — fast enough to feel alive, slow enough to be calm
-        (t.truncatingRemainder(dividingBy: 12)) / 12 * .pi * 2
+        // 6s loop on point positions — fast enough that the motion reads on first glance.
+        (t.truncatingRemainder(dividingBy: 6)) / 6 * .pi * 2
+    }
+
+    private func colorCycle(_ t: TimeInterval) -> Int {
+        // Step the saturated accents to a new arrangement every 2s.
+        Int(t / 2) % 3
     }
 }
 
