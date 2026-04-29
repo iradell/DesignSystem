@@ -35,9 +35,11 @@ public struct DSCountdownText: View {
 
     public var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
-            Text(Self.format(remaining: max(0, targetDate.timeIntervalSince(context.date)),
-                             style: style))
+            let remaining = max(0, Int(targetDate.timeIntervalSince(context.date).rounded(.down)))
+            Text(Self.format(remaining: TimeInterval(remaining), style: style))
                 .monospacedDigit()
+                .contentTransition(.numericText(countsDown: true))
+                .animation(.smooth(duration: 0.3), value: remaining)
         }
     }
 
