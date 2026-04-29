@@ -3,10 +3,15 @@ import SwiftUI
 // MARK: - Home Header
 
 public struct DSHomeHeader: View {
+    private enum TimerSource {
+        case text(String)
+        case targetDate(Date)
+    }
+
     private let title: String
     private let avatar: Image?
     private let avatarURL: URL?
-    private let timerText: String?
+    private let timer: TimerSource?
     /// Controls whether the compact timer pill is visible.
     /// Pass `false` (or bind to a `Bool`) when the session timer is already shown
     /// in the page content (e.g. the hero prompt card is visible) so that only one
@@ -26,7 +31,26 @@ public struct DSHomeHeader: View {
         self.title = title
         self.avatar = avatar
         self.avatarURL = avatarURL
-        self.timerText = timerText
+        self.timer = timerText.map(TimerSource.text)
+        self.isTimerVisible = isTimerVisible
+        self.onSettingsTap = onSettingsTap
+    }
+
+    /// Self-ticking variant — pass the deadline `Date` provided by the service
+    /// and the pill counts down on its own. Use this when both the header and
+    /// in-page timers need to share a single source of truth.
+    public init(
+        title: String = "Discover",
+        avatar: Image? = nil,
+        avatarURL: URL? = nil,
+        timerTargetDate: Date,
+        isTimerVisible: Bool = true,
+        onSettingsTap: @escaping () -> Void
+    ) {
+        self.title = title
+        self.avatar = avatar
+        self.avatarURL = avatarURL
+        self.timer = .targetDate(timerTargetDate)
         self.isTimerVisible = isTimerVisible
         self.onSettingsTap = onSettingsTap
     }
@@ -43,12 +67,19 @@ public struct DSHomeHeader: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
-                if let timerText, isTimerVisible {
-                    DSCompactTimer(text: timerText)
-                        .layoutPriority(1)
-                        .transition(
-                            .opacity.combined(with: .offset(y: -DSSpacing.xs))
-                        )
+                if let timer, isTimerVisible {
+                    Group {
+                        switch timer {
+                        case .text(let value):
+                            DSCompactTimer(text: value)
+                        case .targetDate(let date):
+                            DSCompactTimer(targetDate: date)
+                        }
+                    }
+                    .layoutPriority(1)
+                    .transition(
+                        .opacity.combined(with: .offset(y: -DSSpacing.xs))
+                    )
                 }
             }
             // Reserve the height the timer pill would occupy so the header doesn't
@@ -79,10 +110,21 @@ public struct DSHomeHeader: View {
 // MARK: - Compact Timer
 
 public struct DSCompactTimer: View {
-    private let text: String
+    private enum Content {
+        case text(String)
+        case targetDate(Date)
+    }
 
+    private let content: Content
+
+    /// Static label — caller is responsible for the displayed string.
     public init(text: String) {
-        self.text = text
+        self.content = .text(text)
+    }
+
+    /// Self-ticking countdown to `targetDate` rendered as `HH:MM:SS`.
+    public init(targetDate: Date) {
+        self.content = .targetDate(targetDate)
     }
 
     public var body: some View {
@@ -91,12 +133,19 @@ public struct DSCompactTimer: View {
                 .font(.system(size: 12))
                 .foregroundStyle(DSColors.accentIndigo)
 
-            Text(text)
-                .font(DSTypography.bodySmall)
-                .foregroundStyle(DSColors.accentIndigo)
-                .tracking(-0.3)
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
+            Group {
+                switch content {
+                case .text(let value):
+                    Text(value)
+                case .targetDate(let date):
+                    DSCountdownText(targetDate: date, style: .compact)
+                }
+            }
+            .font(DSTypography.bodySmall)
+            .foregroundStyle(DSColors.accentIndigo)
+            .tracking(-0.3)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
         }
         .padding(.horizontal, 11)
         .padding(.vertical, DSSpacing.xxs)

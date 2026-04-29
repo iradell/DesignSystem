@@ -75,8 +75,13 @@ public struct DSQuoteCard: View {
 // MARK: - Hero Prompt Card
 
 public struct DSHeroPromptCard: View {
+    private enum TimerSource {
+        case text(String)
+        case targetDate(Date)
+    }
+
     private let tag: String
-    private let timeRemaining: String
+    private let timer: TimerSource
     private let prompt: String
     private let participantCount: Int
     /// Label shown on the action button when the card is collapsed.
@@ -102,7 +107,31 @@ public struct DSHeroPromptCard: View {
         action: @escaping () -> Void
     ) {
         self.tag = tag
-        self.timeRemaining = timeRemaining
+        self.timer = .text(timeRemaining)
+        self.prompt = prompt
+        self.participantCount = participantCount
+        self.buttonTitle = buttonTitle
+        self.submitTitle = submitTitle
+        self.isExpanded = isExpanded
+        self._answerText = answerText
+        self.action = action
+    }
+
+    /// Self-ticking variant — pass the same deadline `Date` as the header timer
+    /// so both displays stay in sync. The card formats it as `1h 24m left`.
+    public init(
+        tag: String = "DAILY PROMPT",
+        targetDate: Date,
+        prompt: String,
+        participantCount: Int = 0,
+        buttonTitle: String = "Answer Now",
+        submitTitle: String = "Submit Answer",
+        isExpanded: Bool = false,
+        answerText: Binding<String> = .constant(""),
+        action: @escaping () -> Void
+    ) {
+        self.tag = tag
+        self.timer = .targetDate(targetDate)
         self.prompt = prompt
         self.participantCount = participantCount
         self.buttonTitle = buttonTitle
@@ -161,9 +190,16 @@ public struct DSHeroPromptCard: View {
                 Image(systemName: "clock")
                     .font(.system(size: 12))
                     .foregroundStyle(DSColors.textSecondary)
-                Text(timeRemaining)
-                    .font(DSTypography.bodySmall)
-                    .foregroundStyle(DSColors.textSecondary)
+                Group {
+                    switch timer {
+                    case .text(let value):
+                        Text(value)
+                    case .targetDate(let date):
+                        DSCountdownText(targetDate: date, style: .verbose)
+                    }
+                }
+                .font(DSTypography.bodySmall)
+                .foregroundStyle(DSColors.textSecondary)
             }
         }
     }
