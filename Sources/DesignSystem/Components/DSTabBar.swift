@@ -56,6 +56,7 @@ public struct DSTabBar: View {
         }
         .frame(height: barHeight)
         .shadow(color: .black.opacity(0.2), radius: 25, y: 12)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 
     // MARK: - Background
