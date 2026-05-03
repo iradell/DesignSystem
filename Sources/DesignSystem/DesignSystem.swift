@@ -46,7 +46,7 @@
 //   StepItem           - How-it-works step row
 //   StepList           - Vertical list of step items
 //   TextDivider        - Horizontal divider with centered text
-//   InterestCategory   - Interest section with icon header and chips
+//   InterestCategorySection   - Interest section with icon header and chips
 //   GlassIcon          - App logo / dark glass icon
 //   IllustrationIcon   - Light glass illustration icon
 //   SearchBar          - Glass search bar with magnifying glass icon

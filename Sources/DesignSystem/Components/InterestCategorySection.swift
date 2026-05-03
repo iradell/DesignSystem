@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Interest Category
 
-public struct InterestCategory: View {
+public struct InterestCategorySection: View {
     private let icon: String
     private let title: String
     private let interests: [String]
@@ -46,21 +46,21 @@ public struct InterestCategory: View {
 
     ScrollView {
         VStack(alignment: .leading, spacing: 24) {
-            InterestCategory(
+            InterestCategorySection(
                 icon: "paintpalette",
                 title: "Creative Hobbies",
                 interests: ["Painting", "Photography", "Writing", "Crafting", "Playing music", "Pottery"],
                 selectedInterests: $selected
             )
 
-            InterestCategory(
+            InterestCategorySection(
                 icon: "figure.run",
                 title: "Movement",
                 interests: ["Running", "Cycling", "Hiking", "Yoga", "Surfing"],
                 selectedInterests: $selected
             )
 
-            InterestCategory(
+            InterestCategorySection(
                 icon: "brain.head.profile",
                 title: "Intellectual",
                 interests: ["Reading", "Chess", "Astronomy"],
