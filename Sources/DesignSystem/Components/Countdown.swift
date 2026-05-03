@@ -68,7 +68,7 @@ public struct CountdownText: View {
 // MARK: - Previews
 
 #Preview("Countdown Text") {
-    @Previewable @State var target = Date().addingTimeInterval(60 * 60 + 24 * 60 + 12)
+    @Previewable @State var target: Date = Date().addingTimeInterval(5052)
     VStack(spacing: 16) {
         CountdownText(targetDate: target, style: .compact)
             .font(Typography.bodySmall)
