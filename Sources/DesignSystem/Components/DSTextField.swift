@@ -81,12 +81,18 @@ public struct DSGlassTextField: View {
             }
             .padding(.horizontal, 25)
             .padding(.vertical, 21)
+            // Layered fill: ultraThinMaterial alone almost vanishes on the
+            // unified `.form` background, so we sit a soft white wash on top
+            // of it. The border is a low-opacity dark stroke so the field's
+            // edge still reads against the lavender gradient.
             .background(.ultraThinMaterial)
+            .background(DSColors.inputFill)
             .clipShape(RoundedRectangle(cornerRadius: DSRadius.lg))
             .overlay(
                 RoundedRectangle(cornerRadius: DSRadius.lg)
-                    .stroke(DSColors.glassBorder, lineWidth: 1)
+                    .stroke(DSColors.inputBorder, lineWidth: 1)
             )
+            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
             .contentShape(RoundedRectangle(cornerRadius: DSRadius.lg))
             .onTapGesture {
                 isFocused = true
@@ -97,7 +103,7 @@ public struct DSGlassTextField: View {
     private var promptText: Text {
         Text(placeholder)
             .font(DSTypography.bodyMedium.weight(.bold))
-            .foregroundStyle(DSColors.textPlaceholder)
+            .foregroundStyle(DSColors.textMuted)
     }
 }
 
@@ -492,7 +498,7 @@ public struct DSDOBInputGroup: View {
         DSGlassTextField("Password", text: .constant(""), isSecure: true)
     }
     .padding(32)
-    .background(DSColors.onboardingGradient)
+    .background(DSGradientBackground(style: .form))
 }
 
 #Preview("DOB Fields") {

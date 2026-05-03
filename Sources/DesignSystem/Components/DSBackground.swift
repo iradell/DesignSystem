@@ -17,21 +17,11 @@ public struct DSGradientBackground: View {
     }
 
     public var body: some View {
-        switch style {
-        case .onboarding:
-            onboardingBackground
-        case .form:
-            formBackground
-        }
-    }
-
-    private var onboardingBackground: some View {
-        LinearGradient(
-            colors: [Color(hex: 0xE8E9F4), Color(hex: 0xC7D0FF)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .ignoresSafeArea()
+        // The app uses a single unified background everywhere — the lavender
+        // "form" gradient. `.onboarding` is kept as an enum case for source
+        // compatibility but routes to the same renderer so no screen can
+        // accidentally diverge.
+        formBackground
     }
 
     private var formBackground: some View {

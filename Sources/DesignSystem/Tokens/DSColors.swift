@@ -25,6 +25,13 @@ public enum DSColors {
     public static let glassBorderStrong = Color.white.opacity(0.8)
     public static let glassBorderLight = Color.white.opacity(0.3)
 
+    // MARK: - Inputs (tuned for the unified .form background)
+    /// Solid-ish white fill that stays visible on the lavender `.form` gradient.
+    public static let inputFill = Color.white.opacity(0.7)
+    /// Subtle dark stroke so the field's edge reads against a light gradient
+    /// (the white glass border alone disappears on the unified background).
+    public static let inputBorder = Color(hex: 0x121212).opacity(0.08)
+
     // MARK: - Gradients
     public static let onboardingGradient = LinearGradient(
         colors: [Color(hex: 0xE8E9F4), Color(hex: 0xC7D0FF)],
