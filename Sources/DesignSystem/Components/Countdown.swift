@@ -68,9 +68,8 @@ public struct CountdownText: View {
 // MARK: - Previews
 
 #Preview("Countdown Text") {
-    let target: Date = Date().addingTimeInterval(60 * 60 + 24 * 60 + 12)
-    let bg: Color = Color(hex: 0xF8F9FA)
-    return VStack(spacing: 16) {
+    @Previewable @State var target = Date().addingTimeInterval(60 * 60 + 24 * 60 + 12)
+    VStack(spacing: 16) {
         CountdownText(targetDate: target, style: .compact)
             .font(Typography.bodySmall)
             .foregroundStyle(Colors.accentIndigo)
@@ -80,5 +79,5 @@ public struct CountdownText: View {
             .foregroundStyle(Colors.textSecondary)
     }
     .padding(24)
-    .background(bg)
+    .background(Colors.bgLightAlt)
 }
