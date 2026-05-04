@@ -44,14 +44,6 @@ public struct AnswerInput: View {
             .onTapGesture {
                 isFocused = true
             }
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Done") { isFocused = false }
-                        .font(Typography.labelMedium)
-                        .foregroundStyle(Colors.accentIndigo)
-                }
-            }
     }
 }
 
