@@ -9,6 +9,36 @@ import SwiftUI
 
 #if os(iOS)
 
+// MARK: - Stack Root Environment Key
+
+/// Marks the view as the root of its enclosing `NavigationStack`. When `true`,
+/// `NavigationBarModifier` automatically suppresses its leading back button —
+/// because there is nothing behind a stack root to navigate back to.
+///
+/// Set via `.markAsStackRoot()` on the root content of every coordinator's
+/// `withNavigation(...)` call. Pushed destinations rendered via
+/// `.navigationDestination` are siblings of the marked content rather than
+/// descendants, so they do not inherit the flag and their back buttons render
+/// normally.
+private struct IsStackRootKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
+public extension EnvironmentValues {
+    var isStackRoot: Bool {
+        get { self[IsStackRootKey.self] }
+        set { self[IsStackRootKey.self] = newValue }
+    }
+}
+
+public extension View {
+    /// Marks this view as the root of its enclosing `NavigationStack`. Causes
+    /// `.navigationBar(onBack:)` to omit the back button automatically.
+    func markAsStackRoot() -> some View {
+        environment(\.isStackRoot, true)
+    }
+}
+
 // MARK: - Navigation Bar Modifier
 
 /// A `ViewModifier` that configures the system `NavigationBar` to match the
@@ -45,6 +75,8 @@ public struct NavigationBarModifier<TrailingContent: View>: ViewModifier {
     private let onBack: (() -> Void)?
     private let trailingContent: TrailingContent
 
+    @Environment(\.isStackRoot) private var isStackRoot
+
     // MARK: Init
 
     public init(
@@ -60,13 +92,17 @@ public struct NavigationBarModifier<TrailingContent: View>: ViewModifier {
     // MARK: Body
 
     public func body(content: Content) -> some View {
-        content
+        // Suppress the back button when the view is marked as the root of its
+        // NavigationStack — there is nothing behind it to navigate back to.
+        let resolvedOnBack: (() -> Void)? = isStackRoot ? nil : onBack
+
+        return content
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 // Leading: DS-styled back button
-                if let onBack {
+                if let resolvedOnBack {
                     ToolbarItem(placement: .topBarLeading) {
-                        BackButton(action: onBack)
+                        BackButton(action: resolvedOnBack)
                     }
                 }
 
