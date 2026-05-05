@@ -50,6 +50,12 @@ public struct TabBar: View {
                 background
                 indicator(width: layout.cellWidth)
                     .position(x: indicatorCenterX, y: barHeight / 2)
+                    .animation(
+                        dragLocation == nil
+                            ? .spring(response: 0.45, dampingFraction: 0.78)
+                            : nil,
+                        value: indicatorCenterX
+                    )
                     .allowsHitTesting(false)
                 labels(highlightedIndex: highlightedIndex)
             }
@@ -161,16 +167,12 @@ public struct TabBar: View {
                         selectedId = items[snappedIndex].id
                     }
                     isDragging = false
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.78)) {
-                        dragLocation = nil
-                    }
+                    dragLocation = nil
                 } else {
                     let idx = layout.index(forCenter: value.location.x)
                     if items.indices.contains(idx), items[idx].id != selectedId {
                         Haptics.impact(.light)
-                        withAnimation(.spring(response: 0.45, dampingFraction: 0.78)) {
-                            selectedId = items[idx].id
-                        }
+                        selectedId = items[idx].id
                     }
                 }
             }
