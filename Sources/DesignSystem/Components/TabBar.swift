@@ -100,7 +100,7 @@ public struct TabBar: View {
         }
         .frame(width: width, height: indicatorHeight)
         .shadow(color: Colors.accentIndigo.opacity(0.35), radius: 14, y: 6)
-        .scaleEffect(isDragging ? 1.04 : 1.0)
+        .scaleEffect(isDragging ? 1.1 : 1.0)
         .animation(.spring(response: 0.4, dampingFraction: 0.78), value: isDragging)
     }
 
