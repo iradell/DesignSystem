@@ -42,13 +42,16 @@ public struct TabBar: View {
             )
             let selectedIndex = items.firstIndex(where: { $0.id == selectedId }) ?? 0
             let indicatorCenterX = dragLocation ?? layout.center(of: selectedIndex)
+            let highlightedIndex = (dragLocation != nil)
+                ? layout.index(forCenter: indicatorCenterX)
+                : selectedIndex
 
             ZStack {
                 background
                 indicator(width: layout.cellWidth)
                     .position(x: indicatorCenterX, y: barHeight / 2)
                     .allowsHitTesting(false)
-                labels(highlightedIndex: layout.index(forCenter: indicatorCenterX))
+                labels(highlightedIndex: highlightedIndex)
             }
             .frame(width: proxy.size.width, height: barHeight)
             .contentShape(Capsule())
@@ -98,7 +101,7 @@ public struct TabBar: View {
         .frame(width: width, height: indicatorHeight)
         .shadow(color: Colors.accentIndigo.opacity(0.35), radius: 14, y: 6)
         .scaleEffect(isDragging ? 1.04 : 1.0)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isDragging)
+        .animation(.spring(response: 0.4, dampingFraction: 0.78), value: isDragging)
     }
 
     // MARK: - Labels
@@ -154,12 +157,12 @@ public struct TabBar: View {
                 let wasDragging = isDragging
                 if wasDragging {
                     let snappedIndex = layout.index(forCenter: layout.clamp(value.location.x))
+                    if items.indices.contains(snappedIndex) {
+                        selectedId = items[snappedIndex].id
+                    }
+                    isDragging = false
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.78)) {
-                        if items.indices.contains(snappedIndex) {
-                            selectedId = items[snappedIndex].id
-                        }
                         dragLocation = nil
-                        isDragging = false
                     }
                 } else {
                     let idx = layout.index(forCenter: value.location.x)
