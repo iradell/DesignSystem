@@ -61,7 +61,23 @@ public extension View {
             GeometryReader { proxy in
                 Color.clear.preference(
                     key: KeyboardInputRegionsKey.self,
-                    value: [proxy.frame(in: .named(keyboardDismissAreaName))]
+                    // Expand the published rect by a small margin. Even
+                    // with the named coordinate space, a few pixels of
+                    // mismatch can leak in at the field's border:
+                    // sub-pixel rounding, async `onPreferenceChange`
+                    // delivery (the rect can lag the field's on-screen
+                    // position by one frame after a keyboard-driven
+                    // scroll), or residual SwiftUI coord-space quirks.
+                    // Without this, an edge tap can land just outside
+                    // the rect and trigger dismiss — which then
+                    // immediately re-focuses because the same tap is
+                    // still inside the field's `.contentShape`,
+                    // producing a visible keyboard flicker.
+                    value: [
+                        proxy
+                            .frame(in: .named(keyboardDismissAreaName))
+                            .insetBy(dx: -16, dy: -16)
+                    ]
                 )
             }
         }
