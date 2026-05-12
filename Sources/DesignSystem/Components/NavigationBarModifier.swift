@@ -41,18 +41,22 @@ public extension View {
 
 // MARK: - Navigation Bar Modifier
 
-/// A `ViewModifier` that configures the system `NavigationBar` to match the
-/// `NavigationHeader` visual exactly:
-/// - Hides the system back button and replaces it with `BackButton` in the
-///   leading toolbar slot.
-/// - Renders an optional inline title using `Typography.labelSmall` /
-///   `tracking(2)` in the principal slot (matching the center slot of
-///   `NavigationHeader`).
-/// - Accepts an optional trailing `@ViewBuilder` for the trailing slot.
-/// - Keeps the toolbar background transparent to let the gradient behind it
-///   show through, matching the old header's `Colors.onboardingGradient` look.
-/// - Drives back navigation through the supplied `onBack` closure so the MVI
-///   intent path (`viewModel.send(.tapBack)`) is preserved end-to-end.
+/// A `ViewModifier` that hides the system `NavigationBar` entirely and
+/// renders a Design-System onboarding header in its place — `BackButton`
+/// (leading), optional uppercase title (centre), and an optional
+/// trailing slot. The header is mounted via `.safeAreaInset(edge: .top)`
+/// so the screen content is laid out below it without overlapping.
+///
+/// Why we don't use the system toolbar: on iOS 26 every `ToolbarItem`
+/// in the navigation bar gets an automatic Liquid Glass capsule applied
+/// behind its content. That capsule stacks behind `BackButton`'s own
+/// glass treatment and produces a visible double-chrome artifact.
+/// Driving the chrome ourselves removes the dependence on whatever the
+/// system happens to do with toolbar items in any given iOS version.
+///
+/// Back navigation is still routed through the supplied `onBack` closure
+/// so the MVI intent path (`viewModel.send(.tapBack)`) is preserved
+/// end-to-end.
 ///
 /// **Usage:**
 /// ```swift
@@ -97,49 +101,51 @@ public struct NavigationBarModifier<TrailingContent: View>: ViewModifier {
         let resolvedOnBack: (() -> Void)? = isStackRoot ? nil : onBack
 
         return content
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                // Leading: DS-styled back button
-                if let resolvedOnBack {
-                    ToolbarItem(placement: .topBarLeading) {
-                        BackButton(action: resolvedOnBack)
-                    }
-                }
-
-                // Principal: optional uppercase tracking title
-                if let title, !title.isEmpty {
-                    ToolbarItem(placement: .principal) {
-                        Text(title)
-                            .font(Typography.labelSmall)
-                            .foregroundStyle(Colors.textSecondary)
-                            .tracking(2)
-                    }
-                }
-
-                // Trailing: caller-supplied content
-                ToolbarItem(placement: .topBarTrailing) {
-                    trailingContent
-                }
+            .toolbar(.hidden, for: .navigationBar)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                header(onBack: resolvedOnBack)
             }
-            // Keep the toolbar area fully transparent so the page gradient
-            // shows through behind the back button — matching the look of
-            // NavigationHeader which rendered directly over the gradient.
-            .toolbarBackground(.hidden, for: .navigationBar)
+    }
+
+    private func header(onBack: (() -> Void)?) -> some View {
+        ZStack {
+            // Side slots own the row's width; the title is overlaid in
+            // a parallel ZStack child so it stays geometrically centred
+            // regardless of how wide leading/trailing end up.
+            HStack(spacing: 0) {
+                if let onBack {
+                    BackButton(action: onBack)
+                }
+                Spacer(minLength: 0)
+                trailingContent
+            }
+
+            if let title, !title.isEmpty {
+                Text(title)
+                    .font(Typography.labelSmall)
+                    .foregroundStyle(Colors.textSecondary)
+                    .tracking(2)
+            }
+        }
+        .padding(.horizontal, Spacing.screenHorizontal)
+        .padding(.vertical, Spacing.sm)
     }
 }
 
 // MARK: - View Extensions
 
 extension View {
-    /// Configures the system navigation bar to match the DS onboarding
-    /// chrome: transparent background, `BackButton` in the leading slot,
-    /// and an optional principal title.
+    /// Renders the DS onboarding header at the top of the screen and
+    /// hides the system navigation bar. See `NavigationBarModifier`.
     ///
     /// - Parameters:
-    ///   - title: Uppercase tracking label rendered in the principal toolbar
-    ///     slot (e.g. `"STEP 1 OF 3"`). Pass `nil` (default) for no title.
-    ///   - onBack: Closure invoked when the back button is tapped. Pass `nil`
-    ///     to suppress the back button entirely (use on the stack root).
+    ///   - title: Uppercase tracking label rendered in the centre of the
+    ///     header (e.g. `"STEP 1 OF 3"`). Pass `nil` (default) for no
+    ///     title.
+    ///   - onBack: Closure invoked when the back button is tapped. Pass
+    ///     `nil` to suppress the back button entirely (or call
+    ///     `.markAsStackRoot()` on the stack's root view to suppress it
+    ///     automatically).
     public func navigationBar(
         title: String? = nil,
         onBack: (() -> Void)? = nil
@@ -151,12 +157,12 @@ extension View {
         )
     }
 
-    /// Configures the system navigation bar with a trailing toolbar item.
+    /// Renders the DS onboarding header with a trailing slot.
     ///
     /// - Parameters:
-    ///   - title: Uppercase tracking label in the principal slot. Default `nil`.
+    ///   - title: Uppercase tracking label rendered in the centre. Default `nil`.
     ///   - onBack: Back button action. Pass `nil` to omit the back button.
-    ///   - trailing: View placed in the trailing toolbar slot.
+    ///   - trailing: View placed in the trailing slot of the header.
     public func navigationBar<Trailing: View>(
         title: String? = nil,
         onBack: (() -> Void)? = nil,
