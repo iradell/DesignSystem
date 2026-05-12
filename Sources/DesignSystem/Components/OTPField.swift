@@ -35,6 +35,11 @@ public struct OTPField: View {
                 code = String(newValue.prefix(length))
             }
         }
+        // Declares the full digit-box row as the tap-claim region for any
+        // ancestor `dismissKeyboardOnBackgroundTap()` modifier. Required
+        // because the underlying TextField is hidden + sized to its
+        // intrinsic frame and therefore can't be located spatially.
+        .markAsKeyboardInputRegion()
     }
 
     private func digitBox(at index: Int) -> some View {

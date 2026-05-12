@@ -56,46 +56,55 @@ public struct GlassTextField: View {
                     .tracking(10)
             }
 
-            HStack {
-                Group {
-                    if isSecure && !isSecureVisible {
-                        SecureField("", text: $text, prompt: promptText)
-                    } else {
-                        TextField("", text: $text, prompt: promptText)
+            if #available(iOS 26.0, *) {
+                HStack {
+                    Group {
+                        if isSecure && !isSecureVisible {
+                            SecureField("", text: $text, prompt: promptText)
+                        } else {
+                            TextField("", text: $text, prompt: promptText)
+                        }
+                    }
+                    .font(Typography.bodyMedium.weight(.bold))
+                    .foregroundStyle(Colors.textPrimary)
+                    .focused($isFocused)
+                    
+                    if isSecure {
+                        Button {
+                            isSecureVisible.toggle()
+                        } label: {
+                            Image(systemName: isSecureVisible ? "eye.fill" : "eye.slash.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(Colors.textMuted)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-                .font(Typography.bodyMedium.weight(.bold))
-                .foregroundStyle(Colors.textPrimary)
-                .focused($isFocused)
-
-                if isSecure {
-                    Button {
-                        isSecureVisible.toggle()
-                    } label: {
-                        Image(systemName: isSecureVisible ? "eye.fill" : "eye.slash.fill")
-                            .font(.system(size: 14))
-                            .foregroundStyle(Colors.textMuted)
-                    }
-                    .buttonStyle(.plain)
+                .padding(.horizontal, 25)
+                .padding(.vertical, 21)
+                // Layered fill: ultraThinMaterial alone almost vanishes on the
+                // unified `.form` background, so we sit a soft white wash on top
+                // of it. The border is a low-opacity dark stroke so the field's
+                // edge still reads against the lavender gradient.
+                //.background(.ultraThinMaterial)
+                //.background(Colors.inputFill)
+                .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Radius.lg)
+                        .stroke(Colors.inputBorder, lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+                .contentShape(RoundedRectangle(cornerRadius: Radius.lg))
+                .glassEffect(.regular.tint(.blue.opacity(0.1)), in: .capsule)
+                .onTapGesture {
+                    isFocused = true
                 }
-            }
-            .padding(.horizontal, 25)
-            .padding(.vertical, 21)
-            // Layered fill: ultraThinMaterial alone almost vanishes on the
-            // unified `.form` background, so we sit a soft white wash on top
-            // of it. The border is a low-opacity dark stroke so the field's
-            // edge still reads against the lavender gradient.
-            .background(.ultraThinMaterial)
-            .background(Colors.inputFill)
-            .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-            .overlay(
-                RoundedRectangle(cornerRadius: Radius.lg)
-                    .stroke(Colors.inputBorder, lineWidth: 1)
-            )
-            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
-            .contentShape(RoundedRectangle(cornerRadius: Radius.lg))
-            .onTapGesture {
-                isFocused = true
+                // Declares the padded input pill (not just the inner
+                // TextField's intrinsic frame) as the tap-claim region for
+                // any ancestor `dismissKeyboardOnBackgroundTap()`.
+                .markAsKeyboardInputRegion()
+            } else {
+                // Fallback on earlier versions
             }
         }
     }
