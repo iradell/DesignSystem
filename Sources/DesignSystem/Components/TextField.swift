@@ -250,6 +250,13 @@ public struct DOBField: View {
             #endif
             Haptics.error()
         }
+        // Declares the styled DOB cell (label + padded text field +
+        // background + border) as the tap-claim region for any ancestor
+        // `dismissKeyboardOnBackgroundTap()` modifier. Without this,
+        // taps near the cell's border would land outside the underlying
+        // SwiftUI `TextField`'s intrinsic frame and dismiss-then-restore
+        // the keyboard.
+        .markAsKeyboardInputRegion()
     }
 
     @ViewBuilder

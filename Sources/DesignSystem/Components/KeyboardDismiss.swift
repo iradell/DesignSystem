@@ -3,13 +3,32 @@ import SwiftUI
 #if os(iOS)
 import UIKit
 
+// MARK: - Coordinate space
+
+/// Private named coordinate space established by
+/// `dismissKeyboardOnBackgroundTap()`. Both the published input-region
+/// rects (via `markAsKeyboardInputRegion`) and the dismiss tap-gesture
+/// location are resolved against this name, which guarantees they share
+/// the same origin.
+///
+/// Why this matters: `proxy.frame(in: .global)` and a `SpatialTapGesture`
+/// with `coordinateSpace: .global` can drift by a small offset inside a
+/// NavigationStack / safe-area / `UIHostingController` configuration —
+/// the geometry "global" is measured against the window while the
+/// gesture "global" can resolve against the hosting view. The drift is
+/// often only a handful of points but is enough that a tap on the very
+/// edge of a published rect falls *outside* it, causing the keyboard to
+/// dismiss-and-reappear right at the field's border. Using a named
+/// space we control eliminates the drift.
+private let keyboardDismissAreaName = "DesignSystem.KeyboardDismissArea"
+
 // MARK: - Keyboard input region
 
 /// Preference key used by `markAsKeyboardInputRegion()` to publish the
-/// global frame of every text-input region in a screen up to its
-/// `dismissKeyboardOnBackgroundTap()` modifier. The modifier collects
-/// these rects and skips dismissal for any tap that lands inside one of
-/// them.
+/// frame of every text-input region (in the dismiss-area's named
+/// coordinate space) up to its `dismissKeyboardOnBackgroundTap()`
+/// modifier. The modifier collects these rects and skips dismissal for
+/// any tap that lands inside one of them.
 private struct KeyboardInputRegionsKey: PreferenceKey {
     static let defaultValue: [CGRect] = []
     static func reduce(value: inout [CGRect], nextValue: () -> [CGRect]) {
@@ -18,29 +37,31 @@ private struct KeyboardInputRegionsKey: PreferenceKey {
 }
 
 public extension View {
-    /// Marks the modified view's bounds (in global coordinates) as a
-    /// region where `.dismissKeyboardOnBackgroundTap()` must NOT fire.
-    /// Apply this to any custom view that wraps a `TextField`,
-    /// `SecureField`, or other input control — particularly when the
-    /// visible tap target is larger than the underlying field's intrinsic
-    /// frame, or when the underlying field is hidden / non-hit-testable
-    /// (`.opacity(0)`, `.allowsHitTesting(false)`).
+    /// Marks the modified view's bounds as a region where
+    /// `.dismissKeyboardOnBackgroundTap()` must NOT fire. Apply this to
+    /// any custom view that wraps a `TextField`, `SecureField`, or other
+    /// input control — particularly when the visible tap target is
+    /// larger than the underlying field's intrinsic frame, or when the
+    /// underlying field is hidden / non-hit-testable (`.opacity(0)`,
+    /// `.allowsHitTesting(false)`).
     ///
     /// The Design-System inputs `GlassTextField` and `OTPField` apply
     /// this internally; consumer-level call sites only need it on their
     /// own custom text-input wrappers.
     ///
-    /// Mechanism: a transparent `GeometryReader` published in `.background`
-    /// emits the view's global frame through a `PreferenceKey`. The
-    /// `dismissKeyboardOnBackgroundTap()` modifier reads the accumulated
-    /// preference and tests every tap location against it before deciding
-    /// whether to resign the first responder.
+    /// Mechanism: a transparent `GeometryReader` published in
+    /// `.background` emits the view's frame, expressed in the named
+    /// coordinate space established by the nearest
+    /// `dismissKeyboardOnBackgroundTap()` ancestor. The dismiss modifier
+    /// reads the accumulated preference and tests every tap location
+    /// (also in that named space) against it before deciding whether
+    /// to resign the first responder.
     func markAsKeyboardInputRegion() -> some View {
         background {
             GeometryReader { proxy in
                 Color.clear.preference(
                     key: KeyboardInputRegionsKey.self,
-                    value: [proxy.frame(in: .global)]
+                    value: [proxy.frame(in: .named(keyboardDismissAreaName))]
                 )
             }
         }
@@ -50,16 +71,10 @@ public extension View {
 // MARK: - Dismiss Keyboard On Background Tap
 
 /// Dismisses the keyboard when the user taps anywhere on the modified
-/// view *except* on a text input. Uses `SpatialTapGesture` to capture the
-/// tap location and skips dismissal when the tap falls inside any region
-/// published by `markAsKeyboardInputRegion()` from a descendant view.
-///
-/// Built-in `UITextField` / `UITextView` instances are also detected
-/// directly by frame-walking the key window — so plain SwiftUI
-/// `TextField`s without an explicit input-region marker are still handled
-/// correctly. Custom components that need a larger tap area than their
-/// underlying field's intrinsic frame must call
-/// `markAsKeyboardInputRegion()` to declare it.
+/// view *except* on a text input. Uses `SpatialTapGesture` to capture
+/// the tap location and skips dismissal when the tap falls inside any
+/// region published by `markAsKeyboardInputRegion()` from a descendant
+/// view.
 ///
 /// Buttons, scroll-view pans, and other non-text interactions are
 /// unaffected: `.simultaneousGesture` observes the tap alongside their
@@ -70,6 +85,11 @@ public extension View {
 /// VStack { ... }
 ///     .dismissKeyboardOnBackgroundTap()
 /// ```
+///
+/// Any custom view wrapping a text input that this modifier should not
+/// dismiss on must apply `.markAsKeyboardInputRegion()` to declare its
+/// tap-claim area. Plain SwiftUI `TextField`s used outside the Design
+/// System should also be marked.
 public extension View {
     func dismissKeyboardOnBackgroundTap() -> some View {
         modifier(DismissKeyboardOnBackgroundTapModifier())
@@ -81,13 +101,16 @@ private struct DismissKeyboardOnBackgroundTapModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .coordinateSpace(name: keyboardDismissAreaName)
             .onPreferenceChange(KeyboardInputRegionsKey.self) { regions in
                 inputRegions = regions
             }
             .simultaneousGesture(
-                SpatialTapGesture(coordinateSpace: .global)
+                SpatialTapGesture(coordinateSpace: .named(keyboardDismissAreaName))
                     .onEnded { event in
-                        if shouldSkip(event.location) { return }
+                        if inputRegions.contains(where: { $0.contains(event.location) }) {
+                            return
+                        }
                         UIApplication.shared.sendAction(
                             #selector(UIResponder.resignFirstResponder),
                             to: nil,
@@ -96,39 +119,6 @@ private struct DismissKeyboardOnBackgroundTapModifier: ViewModifier {
                         )
                     }
             )
-    }
-
-    private func shouldSkip(_ point: CGPoint) -> Bool {
-        if inputRegions.contains(where: { $0.contains(point) }) { return true }
-        return KeyboardDismiss.isLocationOnTextInput(point)
-    }
-}
-
-private enum KeyboardDismiss {
-    /// Fallback for plain SwiftUI text inputs that aren't wrapped by a
-    /// component using `markAsKeyboardInputRegion()`. Walks the key
-    /// window's view tree and returns `true` if any `UITextField` or
-    /// `UITextView` has a frame (in window coordinates) containing
-    /// `point`.
-    static func isLocationOnTextInput(_ point: CGPoint) -> Bool {
-        guard let window = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .flatMap({ $0.windows })
-            .first(where: { $0.isKeyWindow })
-        else { return false }
-
-        return containsTextInput(in: window, at: point)
-    }
-
-    private static func containsTextInput(in view: UIView, at point: CGPoint) -> Bool {
-        if view is UITextField || view is UITextView {
-            let frameInWindow = view.convert(view.bounds, to: nil)
-            if frameInWindow.contains(point) { return true }
-        }
-        for subview in view.subviews {
-            if containsTextInput(in: subview, at: point) { return true }
-        }
-        return false
     }
 }
 
