@@ -7,20 +7,20 @@ public struct MatchCardGrid: View {
     private let age: Int
     private let matchPercentage: Int
     private let bio: String
-    private let image: Image?
+    private let imageSource: ImageSource?
 
     public init(
         name: String,
         age: Int,
         matchPercentage: Int,
         bio: String,
-        image: Image? = nil
+        image: ImageSource? = nil
     ) {
         self.name = name
         self.age = age
         self.matchPercentage = matchPercentage
         self.bio = bio
-        self.image = image
+        self.imageSource = image
     }
 
     public var body: some View {
@@ -61,18 +61,36 @@ public struct MatchCardGrid: View {
 
     @ViewBuilder
     private var imageContent: some View {
-        if let image {
+        switch imageSource {
+        case .image(let image):
             image
                 .resizable()
                 .scaledToFill()
-        } else {
-            Color(hex: 0xE5E7EB)
-                .overlay(
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 40))
-                        .foregroundStyle(Color.white.opacity(0.5))
-                )
+        case .url(let url):
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let loaded):
+                    loaded
+                        .resizable()
+                        .scaledToFill()
+                case .empty, .failure:
+                    placeholder
+                @unknown default:
+                    placeholder
+                }
+            }
+        case .none:
+            placeholder
         }
+    }
+
+    private var placeholder: some View {
+        Color(hex: 0xE5E7EB)
+            .overlay(
+                Image(systemName: "person.fill")
+                    .font(.system(size: 40))
+                    .foregroundStyle(Color.white.opacity(0.5))
+            )
     }
 }
 
