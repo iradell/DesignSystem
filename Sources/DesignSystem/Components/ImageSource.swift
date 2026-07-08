@@ -7,7 +7,7 @@ import SwiftUI
 /// the call site one parameter and makes "exactly one source" the
 /// type-system default. Components fall back to their own placeholder
 /// when the value is `nil`.
-public enum ImageSource: Equatable {
+public enum ImageSource: Equatable, Sendable {
     case image(Image)
     case url(URL)
 }

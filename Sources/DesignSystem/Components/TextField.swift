@@ -56,7 +56,7 @@ public struct GlassTextField: View {
                     .tracking(10)
             }
 
-            HStack {
+            HStack(spacing: Spacing.xs) {
                 Group {
                     if isSecure && !isSecureVisible {
                         SecureField("", text: $text, prompt: promptText)
@@ -64,7 +64,7 @@ public struct GlassTextField: View {
                         TextField("", text: $text, prompt: promptText)
                     }
                 }
-                .font(Typography.bodyMedium.weight(.bold))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Colors.textPrimary)
                 .focused($isFocused)
 
@@ -74,26 +74,20 @@ public struct GlassTextField: View {
                     } label: {
                         Image(systemName: isSecureVisible ? "eye.fill" : "eye.slash.fill")
                             .font(.system(size: 14))
-                            .foregroundStyle(Colors.textMuted)
+                            .foregroundStyle(Colors.textPlaceholder)
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 25)
-            .padding(.vertical, 21)
-            // Layered fill: ultraThinMaterial alone almost vanishes on the
-            // unified `.form` background, so we sit a soft white wash on top
-            // of it. The border is a low-opacity dark stroke so the field's
-            // edge still reads against the lavender gradient.
-            .background(.ultraThinMaterial)
-            .background(Colors.inputFill)
-            .clipShape(RoundedRectangle(cornerRadius: Radius.lg))
-            .overlay(
-                RoundedRectangle(cornerRadius: Radius.lg)
-                    .stroke(Colors.inputBorder, lineWidth: 1)
+            // Spec (LoginProposedV3 TextField/Glass): 16h × 20v padding,
+            // soft `rgba(108,112,117,0.06)` flat fill, 16pt radius, no border.
+            .padding(.horizontal, Spacing.md)
+            .padding(.vertical, Spacing.lg)
+            .background(
+                RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
+                    .fill(Colors.inputFill)
             )
-            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
-            .contentShape(RoundedRectangle(cornerRadius: Radius.lg))
+            .contentShape(RoundedRectangle(cornerRadius: Radius.md, style: .continuous))
             .onTapGesture {
                 isFocused = true
             }
@@ -103,8 +97,8 @@ public struct GlassTextField: View {
 
     private var promptText: Text {
         Text(placeholder)
-            .font(Typography.bodyMedium.weight(.bold))
-            .foregroundStyle(Colors.textMuted)
+            .font(Typography.bodyMedium)
+            .foregroundStyle(Colors.inputPlaceholder)
     }
 }
 

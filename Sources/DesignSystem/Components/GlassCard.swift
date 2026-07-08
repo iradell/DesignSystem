@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Glass Card Size
 
-public enum GlassCardSize {
+public enum GlassCardSize: Sendable {
     case standard
     case large
 }
@@ -22,14 +22,13 @@ public struct GlassCard<Content: View>: View {
     }
 
     public var body: some View {
+        let radius = size == .standard ? Radius.md : Radius.xl
         content
             .padding(size == .standard ? Spacing.md : Spacing.xl)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: size == .standard ? Radius.md : Radius.xl))
-            .overlay(
-                RoundedRectangle(cornerRadius: size == .standard ? Radius.md : Radius.xl)
-                    .stroke(Colors.glassBorderLight, lineWidth: 1)
+            .liquidGlass(
+                shape: RoundedRectangle(cornerRadius: radius, style: .continuous),
+                shadow: .soft
             )
     }
 }

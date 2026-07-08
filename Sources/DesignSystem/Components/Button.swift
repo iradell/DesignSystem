@@ -2,13 +2,21 @@ import SwiftUI
 
 // MARK: - Button Style
 
-public enum ButtonStyle {
+public enum ButtonStyle: Sendable {
     case dark
     case gradient
 }
 
 // MARK: - Primary Button
 
+/// Primary CTA — solid indigo with a layered drop shadow.
+///
+/// Visual spec (Figma `LoginProposedV3` `Button:Sign In`):
+/// - Fill: `#6366F1`
+/// - Radius: 20pt
+/// - Padding: 16pt vertical, fills parent width
+/// - Label: Plus Jakarta Sans SemiBold 18pt, white
+/// - Shadow stack: `0 20 25 -5 rgba(0,0,0,0.10)`, `0 8 10 -6 rgba(0,0,0,0.10)`
 public struct PrimaryButton: View {
     private let title: String
     private let style: ButtonStyle
@@ -17,7 +25,7 @@ public struct PrimaryButton: View {
 
     public init(
         _ title: String,
-        style: ButtonStyle = .dark,
+        style: ButtonStyle = .gradient,
         icon: Image? = nil,
         action: @escaping () -> Void
     ) {
@@ -42,9 +50,11 @@ public struct PrimaryButton: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, Spacing.lg)
+            .padding(.vertical, Spacing.md)
             .padding(.horizontal, Spacing.xxl)
             .background(backgroundView)
+            .shadow(color: .black.opacity(0.10), radius: 12, x: 0, y: 14)
+            .shadow(color: .black.opacity(0.10), radius: 6, x: 0, y: 4)
         }
         .buttonStyle(.plain)
     }
@@ -53,11 +63,13 @@ public struct PrimaryButton: View {
     private var backgroundView: some View {
         switch style {
         case .dark:
-            RoundedRectangle(cornerRadius: .infinity)
+            RoundedRectangle(cornerRadius: Radius.button, style: .continuous)
                 .fill(Colors.bgDark)
         case .gradient:
-            RoundedRectangle(cornerRadius: Radius.lg)
-                .fill(Colors.primaryButtonGradient)
+            // Spec is now solid indigo. The enum case name is kept for
+            // backward compat with existing callers.
+            RoundedRectangle(cornerRadius: Radius.button, style: .continuous)
+                .fill(Colors.accentIndigo)
         }
     }
 }
@@ -88,26 +100,66 @@ public struct SecondaryButton: View {
 
 // MARK: - Back Button
 
+/// Circular glass back/close button — uses the layered Liquid Glass
+/// surface from `LiquidGlass.swift` (frost + color-burn + darken + system
+/// material) so it reads consistently on any background.
 public struct BackButton: View {
     private let size: CGFloat
+    private let systemImage: String
     private let action: () -> Void
 
-    public init(size: CGFloat = 40, action: @escaping () -> Void) {
+    public init(
+        size: CGFloat = 44,
+        systemImage: String = "chevron.left",
+        action: @escaping () -> Void
+    ) {
         self.size = size
+        self.systemImage = systemImage
         self.action = action
     }
 
     public var body: some View {
         Button(action: action) {
-            Image(systemName: "chevron.left")
+            Image(systemName: systemImage)
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(Colors.textPrimary)
                 .frame(width: size, height: size)
-                .background(.ultraThinMaterial)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .stroke(Colors.glassBorderStrong, lineWidth: 1)
+                .liquidGlass(shape: Circle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Icon Button (glass pill)
+
+/// Generic icon button rendered as a glass pill — matches the social-row
+/// buttons in `LoginProposedV3`. Pass any view (SF Symbol, brand asset)
+/// as the label.
+public struct IconButton<Label: View>: View {
+    private let height: CGFloat
+    private let cornerRadius: CGFloat
+    private let action: () -> Void
+    private let label: () -> Label
+
+    public init(
+        height: CGFloat = 56,
+        cornerRadius: CGFloat = 32,
+        action: @escaping () -> Void,
+        @ViewBuilder label: @escaping () -> Label
+    ) {
+        self.height = height
+        self.cornerRadius = cornerRadius
+        self.action = action
+        self.label = label
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            label()
+                .frame(maxWidth: .infinity)
+                .frame(height: height)
+                .liquidGlass(
+                    shape: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 )
         }
         .buttonStyle(.plain)
@@ -132,6 +184,10 @@ public enum SocialProvider: String, CaseIterable, Sendable {
     }
 }
 
+/// Glass-pill social sign-in button. Default (no label) form matches the
+/// 4-up row in `LoginProposedV3`: 56pt tall, 32pt radius, layered glass
+/// surface. The labeled variant keeps the legacy stacked layout for
+/// scenes that still use it.
 public struct SocialButton: View {
     private let provider: SocialProvider
     private let showLabel: Bool
@@ -148,7 +204,11 @@ public struct SocialButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        IconButton(
+            height: 56,
+            cornerRadius: 32,
+            action: action
+        ) {
             HStack(spacing: Spacing.sm) {
                 Image(provider.assetName, bundle: .module)
                     .renderingMode(.original)
@@ -165,16 +225,7 @@ public struct SocialButton: View {
                         .foregroundStyle(Colors.textPrimary)
                 }
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: Radius.md))
-            .overlay(
-                RoundedRectangle(cornerRadius: Radius.md)
-                    .stroke(Colors.glassBorder, lineWidth: 1)
-            )
         }
-        .buttonStyle(.plain)
     }
 }
 
@@ -196,8 +247,8 @@ public struct ActionButton: View {
                 .foregroundStyle(Colors.textOnDark)
                 .padding(.horizontal, 28)
                 .padding(.vertical, Spacing.sm)
-                .background(Colors.answerButtonGradient)
-                .clipShape(RoundedRectangle(cornerRadius: Radius.md))
+                .background(Colors.accentIndigo)
+                .clipShape(RoundedRectangle(cornerRadius: Radius.button, style: .continuous))
                 .shadow(color: Colors.indigoGlow, radius: 15, y: 10)
                 .shadow(color: Colors.indigoGlow, radius: 6, y: 4)
         }
@@ -210,10 +261,11 @@ public struct ActionButton: View {
 #Preview("Primary Buttons") {
     VStack(spacing: 20) {
         PrimaryButton("Get Started", style: .dark) {}
-        PrimaryButton("Continue", style: .gradient) {}
+        PrimaryButton("Sign In", style: .gradient) {}
         PrimaryButton("Continue", style: .gradient, icon: Image(systemName: "arrow.right")) {}
     }
-    .padding()
+    .padding(32)
+    .background(.onboarding)
 }
 
 #Preview("Secondary & Back Buttons") {
@@ -227,27 +279,18 @@ public struct ActionButton: View {
 
         ActionButton("Answer Now") {}
     }
-    .padding()
-    .background(Colors.onboardingGradient)
+    .padding(32)
+    .background(.onboarding)
 }
 
-#Preview("Social Buttons") {
+#Preview("Social Row") {
     VStack(spacing: 20) {
-        LazyVGrid(columns: [
-            GridItem(.flexible()),
-            GridItem(.flexible())
-        ], spacing: 16) {
-            ForEach(SocialProvider.allCases, id: \.self) { provider in
-                SocialButton(provider: provider) {}
-            }
-        }
-
         HStack(spacing: 12) {
             ForEach(SocialProvider.allCases, id: \.self) { provider in
                 SocialButton(provider: provider, showLabel: false) {}
             }
         }
     }
-    .padding()
-    .background(Color(hex: 0xF8F9FA))
+    .padding(32)
+    .background(.onboarding)
 }

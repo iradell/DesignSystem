@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Chat Bubble Style
 
-public enum ChatBubbleStyle {
+public enum ChatBubbleStyle: Sendable {
     case sent
     case received
 }
