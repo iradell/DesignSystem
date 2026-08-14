@@ -18,28 +18,31 @@ public struct SearchBar: View {
     public var body: some View {
         HStack(spacing: Spacing.sm) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 16, weight: .medium))
+                .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(Colors.textMuted)
 
             ZStack(alignment: .leading) {
                 if text.isEmpty {
                     Text(placeholder)
-                        .font(Typography.bodyDefault)
+                        .font(Typography.bodySmall)
+                        .fontWeight(.bold)
                         .foregroundStyle(Colors.textMuted)
                 }
 
                 TextField("", text: $text)
-                    .font(Typography.bodyDefault)
+                    .font(Typography.bodySmall)
+                    .fontWeight(.bold)
                     .foregroundStyle(Colors.textPrimary)
                     .focused($isFocused)
             }
         }
         .padding(.horizontal, 17)
-        .padding(.vertical, 13)
+        .padding(.vertical, 15)
+        .background(Colors.inputFill)
         .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: Radius.md))
+        .clipShape(Capsule())
         .overlay(
-            RoundedRectangle(cornerRadius: Radius.md)
+            Capsule()
                 .stroke(Colors.glassBorder, lineWidth: 1)
         )
     }

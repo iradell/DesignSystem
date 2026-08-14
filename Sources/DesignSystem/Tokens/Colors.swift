@@ -26,6 +26,9 @@ public enum Colors {
     public static let accentIndigo = Color(hex: 0x6366F1)
     public static let accentPurple = Color(hex: 0x7C3AED)
     public static let accentDeepIndigo = Color(hex: 0x4F46E5)
+    /// Light lavender-violet — section labels / kickers on light glass
+    /// surfaces (e.g. "ACTIVE VIBES" in the chat list).
+    public static let accentViolet = Color(hex: 0xA78BFA)
 
     // MARK: - Liquid Glass (composable layered effect)
     /// Base white wash that sits over the material — 65% opacity per Figma
