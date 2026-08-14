@@ -56,6 +56,11 @@
 //   ChatListItem       - Chat list row with avatar, name, preview, unread dot
 //   ContextPill        - Small glass pill with sparkle icon + label
 //   PopoverMenu        - Glass dropdown menu with action items
+//   ChatConversationHeader - Chat thread header (back, avatar, name, presence, more)
+//   ChatVibeContextCard - Expanded daily-prompt reference card with two answer tiles
+//   BadgedIconButton   - Circular glass icon button with a numeric badge
+//   ChatReplyPreviewBanner - Compose-time "replying to X" banner with dismiss
+//   .swipeToReply(onReply:) - Swipe-right gesture modifier for chat bubbles
 //   GradientBackground - Full-screen gradient background
 //   FlowLayout           - Wrapping flow layout for chips
 //
