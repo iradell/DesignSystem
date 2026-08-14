@@ -49,6 +49,7 @@ public struct ChatInputBar: View {
                     .foregroundStyle(Colors.textPrimary)
                     .padding(.leading, Spacing.xs)
             }
+            .markAsKeyboardInputRegion()
 
             // Send button
             Button(action: onSend) {

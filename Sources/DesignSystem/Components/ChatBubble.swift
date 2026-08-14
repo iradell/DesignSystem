@@ -14,17 +14,20 @@ public struct ChatBubble: View {
     private let style: ChatBubbleStyle
     private let timestamp: String
     private let status: String?
+    private let replyPreview: ChatReplyPreview?
 
     public init(
         _ text: String,
         style: ChatBubbleStyle,
         timestamp: String,
-        status: String? = nil
+        status: String? = nil,
+        replyPreview: ChatReplyPreview? = nil
     ) {
         self.text = text
         self.style = style
         self.timestamp = timestamp
         self.status = status
+        self.replyPreview = replyPreview
     }
 
     public var body: some View {
@@ -39,19 +42,46 @@ public struct ChatBubble: View {
     // MARK: - Bubble
 
     private var bubble: some View {
-        Text(text)
-            .font(Typography.bodyDefault)
-            .foregroundStyle(style == .sent ? Colors.textOnDark : Colors.textPrimary)
-            .lineSpacing(8.75)
-            .padding(.horizontal, 21)
-            .padding(.vertical, 16)
-            .background(bubbleBackground)
-            .clipShape(bubbleShape)
-            .overlay(
-                bubbleShape
-                    .stroke(style == .received ? Colors.glassBorderStrong : Color.clear, lineWidth: 1)
-            )
-            .frame(maxWidth: 293, alignment: .leading)
+        VStack(alignment: .leading, spacing: Spacing.xs) {
+            if let replyPreview {
+                replyPreviewStrip(replyPreview)
+            }
+
+            Text(text)
+                .font(Typography.bodyDefault)
+                .foregroundStyle(style == .sent ? Colors.textOnDark : Colors.textPrimary)
+                .lineSpacing(8.75)
+        }
+        .padding(.horizontal, 21)
+        .padding(.vertical, 16)
+        .background(bubbleBackground)
+        .clipShape(bubbleShape)
+        .overlay(
+            bubbleShape
+                .stroke(style == .received ? Colors.glassBorderStrong : Color.clear, lineWidth: 1)
+        )
+        .frame(maxWidth: 293, alignment: .leading)
+    }
+
+    private func replyPreviewStrip(_ preview: ChatReplyPreview) -> some View {
+        HStack(spacing: 6) {
+            Capsule()
+                .fill(style == .sent ? Color.white.opacity(0.6) : Colors.accentIndigo)
+                .frame(width: 2, height: 24)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(preview.author.uppercased())
+                    .font(.system(size: 9, weight: .heavy))
+                    .foregroundStyle(style == .sent ? Color.white.opacity(0.75) : Colors.accentIndigo)
+
+                Text(preview.snippet)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(style == .sent ? Color.white.opacity(0.65) : Colors.textSecondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     @ViewBuilder
@@ -149,6 +179,7 @@ public struct QuotedChatBubble: View {
                     Text(quoteText)
                         .font(.system(size: 14, weight: .bold, design: .serif).italic())
                         .foregroundStyle(Color.white.opacity(0.9))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(17)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -164,6 +195,7 @@ public struct QuotedChatBubble: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(Colors.textOnDark)
                     .lineSpacing(8.75)
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(4)
@@ -227,6 +259,23 @@ public struct QuotedChatBubble: View {
             "We should definitely do a movie night soon. ✨",
             style: .received,
             timestamp: "1:16 PM"
+        )
+    }
+    .padding(Spacing.xl)
+    .background(Color(hex: 0xF8F9FA))
+}
+
+#Preview("Chat Bubble — Reply Reference") {
+    VStack(spacing: Spacing.lg) {
+        ChatBubble(
+            "Yes! I'm completely down. How about this Friday?",
+            style: .sent,
+            timestamp: "1:18 PM",
+            status: "Delivered",
+            replyPreview: ChatReplyPreview(
+                author: "Sophie",
+                snippet: "We should definitely do a movie night soon. ✨"
+            )
         )
     }
     .padding(Spacing.xl)
