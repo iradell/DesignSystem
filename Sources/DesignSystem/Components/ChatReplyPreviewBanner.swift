@@ -22,10 +22,16 @@ public struct ChatReplyPreview: Sendable, Equatable {
 public struct ChatReplyPreviewBanner: View {
     private let preview: ChatReplyPreview
     private let onDismiss: () -> Void
+    private let onTap: (() -> Void)?
 
-    public init(preview: ChatReplyPreview, onDismiss: @escaping () -> Void) {
+    public init(
+        preview: ChatReplyPreview,
+        onDismiss: @escaping () -> Void,
+        onTap: (() -> Void)? = nil
+    ) {
         self.preview = preview
         self.onDismiss = onDismiss
+        self.onTap = onTap
     }
 
     public var body: some View {
@@ -34,17 +40,15 @@ public struct ChatReplyPreviewBanner: View {
                 .fill(Colors.accentIndigo)
                 .frame(width: 3, height: 34)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("REPLYING TO \(preview.author.uppercased())")
-                    .font(.system(size: 10, weight: .heavy))
-                    .tracking(0.5)
-                    .foregroundStyle(Colors.accentIndigo)
-
-                Text(preview.snippet)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Colors.textSecondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
+            // Only the label/snippet is tappable — the dismiss button keeps
+            // its own hit area rather than sitting inside a larger button.
+            Group {
+                if let onTap {
+                    Button(action: onTap) { previewText }
+                        .buttonStyle(.plain)
+                } else {
+                    previewText
+                }
             }
 
             Spacer(minLength: Spacing.xs)
@@ -59,6 +63,7 @@ public struct ChatReplyPreviewBanner: View {
             }
             .buttonStyle(.plain)
         }
+        .contentShape(Rectangle())
         .padding(.horizontal, 14)
         .padding(.vertical, Spacing.sm)
         .background(.ultraThinMaterial)
@@ -67,6 +72,23 @@ public struct ChatReplyPreviewBanner: View {
             RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
                 .stroke(Colors.glassBorder, lineWidth: 1)
         )
+    }
+
+    private var previewText: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("REPLYING TO \(preview.author.uppercased())")
+                .font(.system(size: 10, weight: .heavy))
+                .tracking(0.5)
+                .foregroundStyle(Colors.accentIndigo)
+
+            Text(preview.snippet)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Colors.textSecondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
     }
 }
 
