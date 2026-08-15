@@ -60,7 +60,11 @@ public struct ChatBubble: View {
             bubbleShape
                 .stroke(style == .received ? Colors.glassBorderStrong : Color.clear, lineWidth: 1)
         )
-        .frame(maxWidth: 293, alignment: .leading)
+        // Align to the bubble's own side, not always leading: this frame
+        // takes the full 293 cap even when the message is short, so a
+        // leading-aligned sent bubble would sit that whole width away from
+        // the right edge it should be hugging.
+        .frame(maxWidth: 293, alignment: style == .sent ? .trailing : .leading)
     }
 
     private func replyPreviewStrip(_ preview: ChatReplyPreview) -> some View {
