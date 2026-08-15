@@ -3,6 +3,23 @@ import SwiftUI
 #if os(iOS)
 import UIKit
 
+// MARK: - Swipe Reply Direction
+
+/// Which way a bubble is dragged to start a reply. Pick the one that pulls
+/// the bubble away from the side it sits on — received bubbles drag right,
+/// sent bubbles drag left.
+public enum SwipeReplyDirection: Sendable {
+    case leftToRight
+    case rightToLeft
+
+    fileprivate var sign: CGFloat {
+        switch self {
+        case .leftToRight: 1
+        case .rightToLeft: -1
+        }
+    }
+}
+
 // MARK: - Horizontal Pan Recognizer
 
 /// A UIKit `UIPanGestureRecognizer` that refuses to begin unless the pan is
@@ -19,6 +36,11 @@ import UIKit
 /// claiming the touch, so vertical drags are never recognized here at all
 /// and flow through to the ScrollView untouched.
 private struct HorizontalPanRecognizer: UIViewRepresentable {
+    /// Only pans travelling this way are claimed. Wrong-way swipes are left
+    /// entirely alone, so e.g. the edge swipe-back gesture stays usable on a
+    /// bubble that replies in the opposite direction.
+    let allowedSign: CGFloat
+    let onTap: (() -> Void)?
     let onChanged: (CGFloat) -> Void
     let onEnded: (CGFloat) -> Void
 
@@ -27,12 +49,24 @@ private struct HorizontalPanRecognizer: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
         view.backgroundColor = .clear
+
         let pan = UIPanGestureRecognizer(
             target: context.coordinator,
             action: #selector(Coordinator.handlePan(_:))
         )
         pan.delegate = context.coordinator
         view.addGestureRecognizer(pan)
+
+        // Taps are handled here rather than by a SwiftUI Button inside the
+        // bubble: this view is the hit-test target for everything in the
+        // bubble's frame, so a Button underneath it never receives the touch.
+        let tap = UITapGestureRecognizer(
+            target: context.coordinator,
+            action: #selector(Coordinator.handleTap)
+        )
+        tap.delegate = context.coordinator
+        view.addGestureRecognizer(tap)
+
         return view
     }
 
@@ -47,6 +81,10 @@ private struct HorizontalPanRecognizer: UIViewRepresentable {
             self.parent = parent
         }
 
+        @objc func handleTap() {
+            parent.onTap?()
+        }
+
         @objc func handlePan(_ pan: UIPanGestureRecognizer) {
             let dx = pan.translation(in: pan.view).x
             switch pan.state {
@@ -59,11 +97,16 @@ private struct HorizontalPanRecognizer: UIViewRepresentable {
             }
         }
 
-        /// The whole point: claim the touch only when it's clearly sideways.
+        /// The whole point: claim the touch only when it's clearly sideways —
+        /// and only when it's heading the way this bubble replies.
         func gestureRecognizerShouldBegin(_ recognizer: UIGestureRecognizer) -> Bool {
+            // A tap only matters when someone is listening for it; otherwise
+            // let it fall through untouched.
+            if recognizer is UITapGestureRecognizer { return parent.onTap != nil }
             guard let pan = recognizer as? UIPanGestureRecognizer else { return true }
             let velocity = pan.velocity(in: pan.view)
-            return abs(velocity.x) > abs(velocity.y)
+            guard abs(velocity.x) > abs(velocity.y) else { return false }
+            return velocity.x * parent.allowedSign > 0
         }
 
         /// Let the ScrollView's own recognizer keep running alongside ours.
@@ -87,8 +130,11 @@ private struct HorizontalPanRecognizer: UIViewRepresentable {
 /// Vertical scrolling started on top of a bubble is unaffected — see
 /// `HorizontalPanRecognizer` for why that needs a UIKit recognizer.
 private struct SwipeToReplyModifier: ViewModifier {
+    let direction: SwipeReplyDirection
+    let onTap: (() -> Void)?
     let onReply: () -> Void
 
+    /// Signed: positive when dragging right, negative when dragging left.
     @State private var dragOffset: CGFloat = 0
     @State private var hasTriggeredHaptic = false
 
@@ -96,13 +142,13 @@ private struct SwipeToReplyModifier: ViewModifier {
     private let triggerThreshold: CGFloat = 44
 
     func body(content: Content) -> some View {
-        ZStack(alignment: .leading) {
+        ZStack(alignment: direction == .leftToRight ? .leading : .trailing) {
             Image(systemName: "arrowshape.turn.up.left.fill")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(Colors.accentIndigo)
                 .opacity(progress)
                 .scaleEffect(0.5 + progress * 0.5)
-                .padding(.leading, 6)
+                .padding(direction == .leftToRight ? .leading : .trailing, 6)
 
             content
                 .offset(x: dragOffset)
@@ -114,9 +160,15 @@ private struct SwipeToReplyModifier: ViewModifier {
         // responder chain.
         .overlay(
             HorizontalPanRecognizer(
+                allowedSign: direction.sign,
+                onTap: onTap,
                 onChanged: { dx in
-                    dragOffset = min(max(0, dx), maxOffset)
-                    let crossedThreshold = dragOffset >= triggerThreshold
+                    // Distance travelled the allowed way; wrong-way movement
+                    // clamps to zero so the bubble never drags backwards.
+                    let travel = min(max(0, dx * direction.sign), maxOffset)
+                    dragOffset = travel * direction.sign
+
+                    let crossedThreshold = travel >= triggerThreshold
                     if crossedThreshold, !hasTriggeredHaptic {
                         Haptics.impact(.light)
                         hasTriggeredHaptic = true
@@ -125,7 +177,7 @@ private struct SwipeToReplyModifier: ViewModifier {
                     }
                 },
                 onEnded: { dx in
-                    if max(0, dx) >= triggerThreshold {
+                    if max(0, dx * direction.sign) >= triggerThreshold {
                         onReply()
                     }
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
@@ -138,15 +190,29 @@ private struct SwipeToReplyModifier: ViewModifier {
     }
 
     private var progress: CGFloat {
-        min(1, dragOffset / triggerThreshold)
+        min(1, abs(dragOffset) / triggerThreshold)
     }
 }
 
 extension View {
-    /// Adds the "swipe right to reply" gesture used throughout the chat
-    /// thread. Apply directly to a `ChatBubble` / `QuotedChatBubble`.
-    public func swipeToReply(onReply: @escaping () -> Void) -> some View {
-        modifier(SwipeToReplyModifier(onReply: onReply))
+    /// Adds the swipe-to-reply gesture used throughout the chat thread.
+    /// Apply directly to a `ChatBubble` / `QuotedChatBubble`.
+    ///
+    /// - Parameters:
+    ///   - direction: which way the bubble is dragged. Use `.rightToLeft` for
+    ///     the current user's own (trailing) bubbles so the drag pulls away
+    ///     from the edge they sit on, and `.leftToRight` for received ones.
+    ///   - onTap: called when the bubble is tapped. This lives here rather
+    ///     than on the bubble's own contents because the gesture layer added
+    ///     by this modifier is the hit-test target across the bubble's frame,
+    ///     so a Button inside it would never receive the touch. Pass `nil`
+    ///     when the bubble has nothing to do on tap, and taps are ignored.
+    public func swipeToReply(
+        direction: SwipeReplyDirection = .leftToRight,
+        onTap: (() -> Void)? = nil,
+        onReply: @escaping () -> Void
+    ) -> some View {
+        modifier(SwipeToReplyModifier(direction: direction, onTap: onTap, onReply: onReply))
     }
 }
 
@@ -156,12 +222,15 @@ extension View {
     ScrollView {
         VStack(spacing: Spacing.lg) {
             ForEach(0..<12, id: \.self) { index in
+                let isSent = !index.isMultiple(of: 2)
                 ChatBubble(
-                    "Swipe me right to reply — and scrolling still works. (\(index))",
-                    style: index.isMultiple(of: 2) ? .received : .sent,
+                    isSent
+                        ? "Mine — swipe me left to reply. (\(index))"
+                        : "Theirs — swipe me right to reply. (\(index))",
+                    style: isSent ? .sent : .received,
                     timestamp: "1:12 PM"
                 )
-                .swipeToReply {}
+                .swipeToReply(direction: isSent ? .rightToLeft : .leftToRight) {}
             }
         }
         .padding(Spacing.xl)
